@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokemonGameAPI.Presentation", "PokemonGameAPI.Presentation\PokemonGameAPI.Presentation.csproj", "{90696F47-EB41-4A6C-A024-894CB8879A45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokemonGameAPI.Persistence", "PokemonGameAPI.Persistence\PokemonGameAPI.Persistence.csproj", "{294D944F-7339-4624-ADE6-17F68E372235}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokemonGameAPI.Domain", "PokemonGameAPI.Domain\PokemonGameAPI.Domain.csproj", "{4576C8DF-3E5F-4F5B-B6E9-02A4F10D3D8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokemonGameAPI.Application", "PokemonGameAPI.Application\PokemonGameAPI.Application.csproj", "{88A9773E-AD68-47CA-87EC-997DB37E043A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokemonGameAPI.Contracts", "PokemonGameAPI.Contracts\PokemonGameAPI.Contracts.csproj", "{28C325ED-3BD9-487E-9FAD-890D418FBA42}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokemonGameAPI.Infrastructure", "PokemonGameAPI.Infrastructure\PokemonGameAPI.Infrastructure.csproj", "{0887783C-0D81-438F-92E5-97DCC3B7A960}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90696F47-EB41-4A6C-A024-894CB8879A45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90696F47-EB41-4A6C-A024-894CB8879A45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90696F47-EB41-4A6C-A024-894CB8879A45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90696F47-EB41-4A6C-A024-894CB8879A45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{294D944F-7339-4624-ADE6-17F68E372235}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{294D944F-7339-4624-ADE6-17F68E372235}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{294D944F-7339-4624-ADE6-17F68E372235}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{294D944F-7339-4624-ADE6-17F68E372235}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4576C8DF-3E5F-4F5B-B6E9-02A4F10D3D8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4576C8DF-3E5F-4F5B-B6E9-02A4F10D3D8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4576C8DF-3E5F-4F5B-B6E9-02A4F10D3D8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4576C8DF-3E5F-4F5B-B6E9-02A4F10D3D8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88A9773E-AD68-47CA-87EC-997DB37E043A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88A9773E-AD68-47CA-87EC-997DB37E043A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88A9773E-AD68-47CA-87EC-997DB37E043A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88A9773E-AD68-47CA-87EC-997DB37E043A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28C325ED-3BD9-487E-9FAD-890D418FBA42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28C325ED-3BD9-487E-9FAD-890D418FBA42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28C325ED-3BD9-487E-9FAD-890D418FBA42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28C325ED-3BD9-487E-9FAD-890D418FBA42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0887783C-0D81-438F-92E5-97DCC3B7A960}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0887783C-0D81-438F-92E5-97DCC3B7A960}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0887783C-0D81-438F-92E5-97DCC3B7A960}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0887783C-0D81-438F-92E5-97DCC3B7A960}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
