@@ -10,8 +10,8 @@ namespace PokemonGameAPI.Domain.Entities
         public int PokemonId { get; set; }
         public Pokemon Pokemon { get; set; } = default!;
 
-        public PokemonStats TrainerPokemonStats { get; set; } = default!;
-        public int PokemonStatsId { get; set; }
+        public TrainerPokemonStats TrainerPokemonStats { get; set; } = default!;
+        public int TrainerPokemonStatsId { get; set; }
 
 
     }

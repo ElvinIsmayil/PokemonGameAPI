@@ -6,10 +6,11 @@ namespace PokemonGameAPI.Domain.Entities
     public class Battle : BaseEntity
     {
         public int Trainer1Id { get; set; }
-        public Trainer Trainer1 { get; set; } = null!;
+        public Trainer Trainer1 { get; set; } = default!;
 
         public int Trainer2Id { get; set; }
-        public Trainer Trainer2 { get; set; } = null!;
+        public Trainer Trainer2 { get; set; } = default!;
+
 
         public DateTime StartTime { get; set; } = DateTime.UtcNow;
         public DateTime EndTime { get; set; }
