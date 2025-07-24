@@ -32,7 +32,7 @@ namespace PokemonGameAPI.Persistence.Configurations
 
             builder.HasOne(p => p.Category)
                 .WithMany(c => c.Pokemons)
-                .HasForeignKey(p => p.CategoryId)
+                .HasForeignKey(p => p.PokemonCategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(p => p.BaseStats)

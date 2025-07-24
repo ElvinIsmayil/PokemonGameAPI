@@ -504,9 +504,6 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.Property<int>("BaseStatsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -543,16 +540,19 @@ namespace PokemonGameAPI.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("PokemonCategoryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("LocationId");
 
                     b.HasIndex("LocationId1");
+
+                    b.HasIndex("PokemonCategoryId");
 
                     b.ToTable("Pokemons");
                 });
@@ -1024,12 +1024,6 @@ namespace PokemonGameAPI.Persistence.Migrations
 
             modelBuilder.Entity("PokemonGameAPI.Domain.Entities.Pokemon", b =>
                 {
-                    b.HasOne("PokemonGameAPI.Domain.Entities.PokemonCategory", "Category")
-                        .WithMany("Pokemons")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PokemonGameAPI.Domain.Entities.Location", null)
                         .WithMany("WildPokemons")
                         .HasForeignKey("LocationId")
@@ -1038,6 +1032,12 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.HasOne("PokemonGameAPI.Domain.Entities.Location", "Location")
                         .WithMany()
                         .HasForeignKey("LocationId1");
+
+                    b.HasOne("PokemonGameAPI.Domain.Entities.PokemonCategory", "Category")
+                        .WithMany("Pokemons")
+                        .HasForeignKey("PokemonCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Category");
 

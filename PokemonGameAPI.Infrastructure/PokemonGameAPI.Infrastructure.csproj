@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PokemonGameAPI.Application\PokemonGameAPI.Application.csproj" />
+    <ProjectReference Include="..\PokemonGameAPI.Contracts\PokemonGameAPI.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>

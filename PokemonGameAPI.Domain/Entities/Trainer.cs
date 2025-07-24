@@ -1,5 +1,4 @@
 ﻿using PokemonGameAPI.Domain.Entities.Common;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PokemonGameAPI.Domain.Entities
 {

@@ -10,19 +10,17 @@ namespace PokemonGameAPI.Domain.Entities
         public bool IsWild { get; set; } = false;
         public string? ImageUrl { get; set; }
 
-        public int CategoryId { get; set; }
+        public int PokemonCategoryId { get; set; }
         public PokemonCategory Category { get; set; } = default!;
 
         public int? LocationId { get; set; }
         public Location? Location { get; set; }
 
-        public PokemonStats BaseStats { get; set; } = default!;
         public int BaseStatsId { get; set; }
+        public PokemonStats BaseStats { get; set; } = default!;
 
         public ICollection<PokemonAbility> Abilities { get; set; } = new List<PokemonAbility>();
         public ICollection<TrainerPokemon> TrainerPokemons { get; set; } = new List<TrainerPokemon>();
-
-
 
     }
 }

@@ -61,7 +61,7 @@ namespace PokemonGameAPI.Persistence.Configurations
                 .HasForeignKey(t => t.WinnerId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            
+
         }
     }
 }

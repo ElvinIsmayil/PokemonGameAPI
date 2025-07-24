@@ -21,7 +21,7 @@ namespace PokemonGameAPI.Persistence.Configurations
             // One-to-many relationship: Category has many Pokemons
             builder.HasMany(pc => pc.Pokemons)
                    .WithOne(p => p.Category)
-                   .HasForeignKey(p => p.CategoryId)
+                   .HasForeignKey(p => p.PokemonCategoryId)
                    .OnDelete(DeleteBehavior.Restrict);
         }
     }
