@@ -33,7 +33,7 @@ namespace PokemonGameAPI.Presentation.Controllers
             return Ok(badge);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] BadgeCreateDto model)
+        public async Task<IActionResult> Create([FromBody] BadgeCreateDto model)
         {
             var createdBadge = await _badgeService.CreateAsync(model);
             return CreatedAtAction(nameof(GetById), new { id = createdBadge.Id }, createdBadge);
@@ -73,5 +73,14 @@ namespace PokemonGameAPI.Presentation.Controllers
         //    }
         //    return Ok("Badge assigned successfully.");
         //}
+
+
+        [HttpPost("{id}/upload-image")]
+        public async Task<IActionResult> UploadImage(int id, IFormFile imageFile)
+        {
+            var result = await _badgeService.UploadImgAsync(id, imageFile);
+            return Ok(result);
+        }
+
     }
 }

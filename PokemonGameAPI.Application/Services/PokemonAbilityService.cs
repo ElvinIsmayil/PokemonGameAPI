@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PokemonGameAPI.Application.Exceptions;
 using PokemonGameAPI.Contracts.DTOs.Pagination;
 using PokemonGameAPI.Contracts.DTOs.PokemonAbility;
 using PokemonGameAPI.Contracts.Services;
@@ -25,9 +26,9 @@ namespace PokemonGameAPI.Application.Services
         public async Task<PokemonAbilityReturnDto> CreateAsync(PokemonAbilityCreateDto model)
         {
             var entity = _mapper.Map<PokemonAbility>(model);
-            var createdEntity = await _repository.CreateAsync(entity);
+             await _repository.CreateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
-            return _mapper.Map<PokemonAbilityReturnDto>(createdEntity);
+            return _mapper.Map<PokemonAbilityReturnDto>(entity);
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -39,7 +40,7 @@ namespace PokemonGameAPI.Application.Services
             var entity = await _repository.GetEntityAsync(x => x.Id == id);
             if (entity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
             await _unitOfWork.SaveChangesAsync();
             return await _repository.DeleteAsync(entity);
@@ -74,7 +75,7 @@ namespace PokemonGameAPI.Application.Services
             var entity = await _repository.GetEntityAsync(x => x.Id == id, asNoTracking: true);
             if (entity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
             return _mapper.Map<PokemonAbilityReturnDto>(entity);
         }
@@ -84,7 +85,7 @@ namespace PokemonGameAPI.Application.Services
             var existingEntity = await _repository.GetEntityAsync(x => x.Id == id);
             if (existingEntity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
 
             _mapper.Map(model, existingEntity);
@@ -103,14 +104,14 @@ namespace PokemonGameAPI.Application.Services
             );
 
             if (pokemonAbility == null)
-                throw new KeyNotFoundException($"Ability with ID {model.AbilityId} not found");
+                throw new NotFoundException($"Ability with ID {model.AbilityId} not found");
 
             var pokemons = await _pokemonRepository.GetQuery()
                 .Where(p => model.PokemonIds.Contains(p.Id))
                 .ToListAsync();
 
             if (!pokemons.Any())
-                throw new KeyNotFoundException("No valid Pokémon found with the provided IDs");
+                throw new NotFoundException("No valid Pokémon found with the provided IDs");
 
             foreach (var pokemon in pokemons)
             {

@@ -4,12 +4,8 @@
     {
         public int Id { get; init; }
         public int Level { get; init; }
-        public int ExperiencePoints { get; init; }
         public int HealthPoints { get; init; }
-        public int MaxHealthPoints { get; init; }
-        public int AttackPoints { get; init; }
-        public int DefensePoints { get; init; }
 
-        public int PokemonName { get; init; }
+        public string PokemonName { get; init; } = default!;
     }
 }

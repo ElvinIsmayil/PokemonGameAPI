@@ -6,7 +6,5 @@ namespace PokemonGameAPI.Contracts.DTOs.Badge
     {
         public string Name { get; init; } = default!;
         public string Description { get; init; } = default!;
-        public IFormFile? ImageFile { get; init; }
-
     }
 }

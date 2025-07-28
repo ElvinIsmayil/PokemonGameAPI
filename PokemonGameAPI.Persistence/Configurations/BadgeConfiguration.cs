@@ -21,11 +21,13 @@ namespace PokemonGameAPI.Infrastructure.Persistence.Configurations
             builder.Property(b => b.ImageUrl)
                 .HasMaxLength(300);
 
-            builder.HasMany(b => b.Gyms)
+            // Configure one-to-one with Gym
+            builder.HasOne(b => b.Gym)
                 .WithOne(g => g.Badge)
-                .HasForeignKey(g => g.BadgeId)
+                .HasForeignKey<Badge>(b => b.GymId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Configure many-to-many with Trainers
             builder.HasMany(b => b.Trainers)
                 .WithMany(t => t.Badges)
                 .UsingEntity(j => j.ToTable("TrainerBadges"));

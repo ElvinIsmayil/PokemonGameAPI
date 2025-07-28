@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using PokemonGameAPI.Application.Exceptions;
 using PokemonGameAPI.Contracts.DTOs.Badge;
 using PokemonGameAPI.Contracts.DTOs.Pagination;
 using PokemonGameAPI.Contracts.Services;
@@ -25,29 +27,11 @@ namespace PokemonGameAPI.Application.Services
         }
         public async Task<BadgeReturnDto> CreateAsync(BadgeCreateDto model)
         {
-            string? imageUrl = null;
-
-            if (model.ImageFile != null)
-            {
-                (imageUrl, List<string> validationErrors) = await _imageService.SaveImageAsync(model.ImageFile, "badges");
-
-                if (validationErrors.Count > 0)
-                {
-                    throw new InvalidOperationException(string.Join(", ", validationErrors));
-                }
-            }
-
             var entity = _mapper.Map<Badge>(model);
-
-            if (imageUrl != null)
-            {
-                entity.ImageUrl = imageUrl;
-            }
-
-            var createdEntity = await _repository.CreateAsync(entity);
+             await _repository.CreateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
 
-            return _mapper.Map<BadgeReturnDto>(createdEntity);
+            return _mapper.Map<BadgeReturnDto>(entity);
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -60,10 +44,9 @@ namespace PokemonGameAPI.Application.Services
             var entity = await _repository.GetEntityAsync(x => x.Id == id);
             if (entity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
 
-            // Delete the image from disk
             if (!string.IsNullOrEmpty(entity.ImageUrl))
             {
                 _imageService.DeleteImage(entity.ImageUrl);
@@ -105,7 +88,7 @@ namespace PokemonGameAPI.Application.Services
             var entity = await _repository.GetEntityAsync(x => x.Id == id, asNoTracking: true);
             if (entity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
             return _mapper.Map<BadgeReturnDto>(entity);
 
@@ -116,31 +99,41 @@ namespace PokemonGameAPI.Application.Services
             var existingEntity = await _repository.GetEntityAsync(x => x.Id == id);
             if (existingEntity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
-            }
-
-            string? imageUrl = existingEntity.ImageUrl;
-
-            if (model.ImageFile != null)
-            {
-                (imageUrl, List<string> validationErrors) = await _imageService.SaveImageAsync(model.ImageFile, folderName, existingEntity.ImageUrl);
-
-                if (validationErrors.Count > 0)
-                {
-                    throw new InvalidOperationException(string.Join(", ", validationErrors));
-                }
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
 
             _mapper.Map(model, existingEntity);
 
-            if (imageUrl != null)
-            {
-                existingEntity.ImageUrl = imageUrl;
-            }
-
             var updatedEntity = await _repository.UpdateAsync(existingEntity);
             await _unitOfWork.SaveChangesAsync();
 
+            return _mapper.Map<BadgeReturnDto>(updatedEntity);
+        }
+
+        public async Task<BadgeReturnDto> UploadImgAsync(int id, IFormFile imageFile)
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id), "ID must be greater than zero");
+            }
+            var entity = await _repository.GetEntityAsync(x => x.Id == id);
+            if (entity == null)
+            {
+                throw new NotFoundException($"Entity with ID {id} not found");
+            }
+            var fileValidationErrors = _imageService.ValidateFileType(imageFile);
+            if (fileValidationErrors.Count > 0)
+            {
+                throw new ValidationException(string.Join(",",fileValidationErrors));
+            }
+            (string? imageUrl, List<string> validationErrors) = await _imageService.SaveImageAsync(imageFile, folderName, entity.ImageUrl);
+            if (validationErrors.Count > 0)
+            {
+                throw new InvalidOperationException(string.Join(", ", validationErrors));
+            }
+            entity.ImageUrl = imageUrl;
+            var updatedEntity = await _repository.UpdateAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<BadgeReturnDto>(updatedEntity);
         }
 

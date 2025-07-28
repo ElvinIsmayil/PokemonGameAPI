@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using PokemonGameAPI.Presentation.ExceptionHandlers;
 
 namespace PokemonGameAPI.Presentation.Extensions
 {
@@ -10,7 +11,7 @@ namespace PokemonGameAPI.Presentation.Extensions
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "ProfessionalFootballLeague.API",
+                    Title = "PokemonGame.API",
                     Version = "v1"
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
@@ -23,17 +24,21 @@ namespace PokemonGameAPI.Presentation.Extensions
                     Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-        {
-            new OpenApiSecurityScheme {
-                Reference = new OpenApiReference {
+                 {
+                new OpenApiSecurityScheme {
+                    Reference = new OpenApiReference {
                     Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
+                    Id = "Bearer"
                 }
             },
             new string[] {}
         }
     });
             });
+
+            services.AddExceptionHandler<NotFoundExceptionHandler>();
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddProblemDetails();
             return services;
         }
     }

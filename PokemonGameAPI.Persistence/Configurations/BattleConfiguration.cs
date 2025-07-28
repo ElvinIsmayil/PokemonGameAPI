@@ -16,31 +16,27 @@ namespace PokemonGameAPI.Persistence.Configurations
             builder.Property(b => b.EndTime)
                    .IsRequired();
 
-            builder.Property(b => b.Result)
-                   .IsRequired();
-
+            // Trainer1 relationship
             builder.HasOne(b => b.Trainer1)
-      .WithMany(t => t.BattlesAsTrainer1)
-      .HasForeignKey(b => b.Trainer1Id)
-      .OnDelete(DeleteBehavior.Restrict);
+                   .WithMany(t => t.BattlesAsTrainer1)
+                   .HasForeignKey(b => b.Trainer1Id)
+                   .OnDelete(DeleteBehavior.Restrict);
 
+            // Trainer2 relationship
             builder.HasOne(b => b.Trainer2)
-                .WithMany(t => t.BattlesAsTrainer2)
-                .HasForeignKey(b => b.Trainer2Id)
-                .OnDelete(DeleteBehavior.Restrict);
+                   .WithMany(t => t.BattlesAsTrainer2)
+                   .HasForeignKey(b => b.Trainer2Id)
+                   .OnDelete(DeleteBehavior.Restrict);
 
+            // Many-to-many for Trainer1Pokemons participating in the battle
             builder.HasMany(b => b.Trainer1Pokemons)
-        .WithMany()
-        .UsingEntity(j => j.ToTable("Trainer1BattlePokemons"));
+                   .WithMany()
+                   .UsingEntity(j => j.ToTable("Trainer1BattlePokemons"));
 
+            // Many-to-many for Trainer2Pokemons participating in the battle
             builder.HasMany(b => b.Trainer2Pokemons)
                    .WithMany()
                    .UsingEntity(j => j.ToTable("Trainer2BattlePokemons"));
-
-
-
-
-
         }
     }
 }

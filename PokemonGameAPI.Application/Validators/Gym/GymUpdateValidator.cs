@@ -21,8 +21,6 @@ namespace PokemonGameAPI.Application.Validators.GymValidator
             RuleFor(x => x.GymLeaderTrainerId)
                 .GreaterThan(0).WithMessage("GymLeaderTrainerId must be greater than zero.");
 
-            RuleFor(x => x.BadgeId)
-                .GreaterThan(0).WithMessage("BadgeId must be greater than zero.");
         }
 
 

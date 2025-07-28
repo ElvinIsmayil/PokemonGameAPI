@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PokemonGameAPI.Application.Exceptions;
 using PokemonGameAPI.Contracts.DTOs.Pagination;
 using PokemonGameAPI.Contracts.DTOs.Pokemon;
 using PokemonGameAPI.Contracts.Services;
@@ -23,9 +24,9 @@ namespace PokemonGameAPI.Application.Services
         public async Task<PokemonReturnDto> CreateAsync(PokemonCreateDto model)
         {
             var entity = _mapper.Map<Pokemon>(model);
-            var createdEntity = await _repository.CreateAsync(entity);
+             await _repository.CreateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
-            return _mapper.Map<PokemonReturnDto>(createdEntity);
+            return _mapper.Map<PokemonReturnDto>(entity);
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -37,7 +38,7 @@ namespace PokemonGameAPI.Application.Services
             var entity = await _repository.GetEntityAsync(x => x.Id == id);
             if (entity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
             await _unitOfWork.SaveChangesAsync();
             return await _repository.DeleteAsync(entity);
@@ -72,7 +73,7 @@ namespace PokemonGameAPI.Application.Services
             var entity = await _repository.GetEntityAsync(x => x.Id == id, asNoTracking: true);
             if (entity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
             return _mapper.Map<PokemonReturnDto>(entity);
         }
@@ -82,7 +83,7 @@ namespace PokemonGameAPI.Application.Services
             var existingEntity = await _repository.GetEntityAsync(x => x.Id == id);
             if (existingEntity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
 
             _mapper.Map(model, existingEntity);

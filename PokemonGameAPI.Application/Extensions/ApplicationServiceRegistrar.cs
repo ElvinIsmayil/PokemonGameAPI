@@ -16,6 +16,7 @@ namespace PokemonGameAPI.Application.Extensions
                 opt.AddProfile(new MapperProfile());
             });
 
+            services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IBadgeService, BadgeService>();
             services.AddScoped<IBattleService, BattleService>();
             services.AddScoped<IGymService, GymService>();
@@ -24,9 +25,11 @@ namespace PokemonGameAPI.Application.Extensions
             services.AddScoped<IPokemonAbilityService, PokemonAbilityService>();
             services.AddScoped<IPokemonCategoryService, PokemonCategoryService>();
             services.AddScoped<IPokemonStatsService, PokemonStatsService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ITournamentService, TournamentService>();
             services.AddScoped<ITrainerService, TrainerService>();
             services.AddScoped<ITrainerPokemonService, TrainerPokemonService>();
+            services.AddScoped<IUserService, UserService>();
 
 
 

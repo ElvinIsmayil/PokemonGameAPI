@@ -24,8 +24,8 @@ namespace PokemonGameAPI.Persistence.Configurations
                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(g => g.Badge)
-                   .WithMany(b => b.Gyms)
-                   .HasForeignKey(g => g.BadgeId)
+                   .WithOne(b => b.Gym)
+                   .HasForeignKey<Badge>(b => b.GymId)
                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(g => g.GymLeader)
@@ -33,13 +33,10 @@ namespace PokemonGameAPI.Persistence.Configurations
                    .HasForeignKey(g => g.GymLeaderTrainerId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(g => g.Battles)
-                   .WithOne()
-                   .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(g => g.Pokemons)
-                   .WithMany()
-                   .UsingEntity(j => j.ToTable("GymPokemons"));
+            builder.HasMany(g => g.NpcTrainers)
+                   .WithOne(t => t.Gym)
+                   .HasForeignKey(t => t.GymId)
+                   .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

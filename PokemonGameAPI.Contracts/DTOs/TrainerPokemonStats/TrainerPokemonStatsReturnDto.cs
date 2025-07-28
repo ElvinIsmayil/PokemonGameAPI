@@ -1,10 +1,9 @@
-﻿using PokemonGameAPI.Contracts.DTOs.Pokemon;
+﻿using PokemonGameAPI.Contracts.DTOs.PokemonStats;
 
 namespace PokemonGameAPI.Contracts.DTOs.TrainerPokemonStats
 {
-    public record TrainerPokemonStatsReturnDto : PokemonReturnDto
+    public record TrainerPokemonStatsReturnDto : PokemonStatsReturnDto
     {
         public int AvailableSkillPoints { get; init; }
-        public PokemonReturnDto PokemonReturnDto { get; init; } = default!;
     }
 }

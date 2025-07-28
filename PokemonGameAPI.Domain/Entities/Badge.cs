@@ -8,7 +8,9 @@ namespace PokemonGameAPI.Domain.Entities
         public string Description { get; set; } = default!;
         public string? ImageUrl { get; set; }
 
-        public ICollection<Gym> Gyms { get; set; } = new List<Gym>();
+        public int GymId { get; set; }
+        public Gym Gym { get; set; } = default!;
+
         public ICollection<Trainer> Trainers { get; set; } = new List<Trainer>();
     }
 }

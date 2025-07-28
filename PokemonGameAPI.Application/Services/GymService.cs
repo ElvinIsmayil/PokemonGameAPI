@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PokemonGameAPI.Application.Exceptions;
 using PokemonGameAPI.Contracts.DTOs.Gym;
 using PokemonGameAPI.Contracts.DTOs.Pagination;
 using PokemonGameAPI.Contracts.Services;
@@ -11,21 +12,45 @@ namespace PokemonGameAPI.Application.Services
     public class GymService : IGymService
     {
         private readonly IRepository<Gym> _repository;
+        private readonly IRepository<Location> _locationRepository;
+        private readonly IRepository<Trainer> _trainerRepository;
+        private readonly IRepository<Badge> _badgeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GymService(IRepository<Gym> repository, IUnitOfWork unitOfWork, IMapper mapper)
+        public GymService(IRepository<Gym> repository, IUnitOfWork unitOfWork, IMapper mapper, IRepository<Badge> badgeRepository, IRepository<Location> locationRepository, IRepository<Trainer> trainerRepository)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _badgeRepository = badgeRepository;
+            _locationRepository = locationRepository;
+            _trainerRepository = trainerRepository;
         }
         public async Task<GymReturnDto> CreateAsync(GymCreateDto model)
         {
-            var entity = _mapper.Map<Gym>(model);
-            var createdEntity = await _repository.CreateAsync(entity);
+            var locationExists = await _locationRepository.IsExistsAsync(x => x.Id == model.LocationId, asNoTracking: true);
+            if (!locationExists)
+                throw new NotFoundException($"Location with ID {model.LocationId} not found.");
+
+            var gymLeaderExists = await _trainerRepository.IsExistsAsync(x => x.Id == model.GymLeaderTrainerId, asNoTracking: true);
+            if (!gymLeaderExists)
+                throw new NotFoundException($"Trainer with ID {model.GymLeaderTrainerId} not found.");
+
+            var gym = _mapper.Map<Gym>(model);
+            await _repository.CreateAsync(gym);
+
+            if (model.Badge != null)
+            {
+                var badge = _mapper.Map<Badge>(model.Badge);
+                badge.GymId = gym.Id;
+
+                await _badgeRepository.CreateAsync(badge);
+            }
+
             await _unitOfWork.SaveChangesAsync();
-            return _mapper.Map<GymReturnDto>(createdEntity);
+            return _mapper.Map<GymReturnDto>(gym);
+           
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -37,7 +62,7 @@ namespace PokemonGameAPI.Application.Services
             var entity = await _repository.GetEntityAsync(x => x.Id == id);
             if (entity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
             await _unitOfWork.SaveChangesAsync();
             return await _repository.DeleteAsync(entity);
@@ -72,7 +97,7 @@ namespace PokemonGameAPI.Application.Services
             var entity = await _repository.GetEntityAsync(x => x.Id == id, asNoTracking: true);
             if (entity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
             return _mapper.Map<GymReturnDto>(entity);
         }
@@ -82,7 +107,7 @@ namespace PokemonGameAPI.Application.Services
             var existingEntity = await _repository.GetEntityAsync(x => x.Id == id);
             if (existingEntity == null)
             {
-                throw new KeyNotFoundException($"Entity with ID {id} not found");
+                throw new NotFoundException($"Entity with ID {id} not found");
             }
 
             _mapper.Map(model, existingEntity);
