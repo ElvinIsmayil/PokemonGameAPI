@@ -10,7 +10,7 @@ public class Trainer : BaseEntity
     public string? AppUserId { get; set; }
     public AppUser? AppUser { get; set; }
 
-    public ICollection<Badge> Badges { get; set; } = new List<Badge>();
+    public ICollection<TrainerBadge> TrainerBadges { get; set; } = new List<TrainerBadge>();
     public ICollection<TrainerPokemon> TrainerPokemons { get; set; } = new List<TrainerPokemon>();
     public ICollection<Tournament> Tournaments { get; set; } = new List<Tournament>();
 

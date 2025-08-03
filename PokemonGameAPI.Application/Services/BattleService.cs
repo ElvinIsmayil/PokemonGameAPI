@@ -12,19 +12,24 @@ namespace PokemonGameAPI.Application.Services
     public class BattleService : IBattleService
     {
         private readonly IRepository<Battle> _repository;
+        private readonly IRepository<TrainerPokemon> _trainerPokemonRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public BattleService(IRepository<Battle> repository, IUnitOfWork unitOfWork, IMapper mapper)
+        public BattleService(IRepository<Battle> repository, IUnitOfWork unitOfWork, IMapper mapper, IRepository<TrainerPokemon> trainerPokemonRepository)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _trainerPokemonRepository = trainerPokemonRepository;
         }
         public async Task<BattleReturnDto> CreateAsync(BattleCreateDto model)
         {
             var entity = _mapper.Map<Battle>(model);
-             await _repository.CreateAsync(entity);
+            entity.Trainer1BattlePokemons = await _trainerPokemonRepository.GetAllAsync(tp => model.Trainer1BattlePokemons.Contains(tp.Id) && model.Trainer1Id == tp.TrainerId);
+            entity.Trainer2BattlePokemons = await _trainerPokemonRepository.GetAllAsync(tp => model.Trainer2BattlePokemons.Contains(tp.Id) && model.Trainer2Id == tp.TrainerId);
+
+            await _repository.CreateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<BattleReturnDto>(entity);
         }
@@ -40,15 +45,29 @@ namespace PokemonGameAPI.Application.Services
             {
                 throw new NotFoundException($"Entity with ID {id} not found");
             }
+            var result = await _repository.DeleteAsync(entity);
             await _unitOfWork.SaveChangesAsync();
-            return await _repository.DeleteAsync(entity);
+
+            return result;
+        }
+
+        public Task<BattleResultDto> ExecuteTurnAsync(BattleTurnDto turn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<BattleReturnDto> FinishBattleAsync(int battleId)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<PagedResponse<BattleListItemDto>> GetAllAsync(int pageNumber, int pageSize)
         {
             int skip = (pageNumber - 1) * pageSize;
 
-            var query = _repository.GetQuery();
+            var query = _repository.GetQuery()
+                .Include(x => x.Trainer1)
+                .Include(x => x.Trainer2);
 
             int totalCount = await query.CountAsync();
 
@@ -68,14 +87,36 @@ namespace PokemonGameAPI.Application.Services
             };
         }
 
+        public Task<BattleReturnDto> GetBattleResultAsync(int battleId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<BattleReturnDto> GetByIdAsync(int id)
         {
-            var entity = await _repository.GetEntityAsync(x => x.Id == id, asNoTracking: true);
+            var entity = await _repository.GetEntityAsync(
+     predicate: x => x.Id == id,
+     asNoTracking: true,
+     includes: new Func<IQueryable<Battle>, IQueryable<Battle>>[]
+     {
+        query => query
+            .Include(t => t.Trainer1)
+            .Include(t => t.Trainer2)
+            .Include(t => t.Winner)
+            .Include(t => t.Trainer1BattlePokemons)
+            .Include(t => t.Trainer2BattlePokemons)
+     });
+
             if (entity == null)
             {
                 throw new NotFoundException($"Entity with ID {id} not found");
             }
             return _mapper.Map<BattleReturnDto>(entity);
+        }
+
+        public Task<BattleReturnDto> StartBattleAsync()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<BattleReturnDto> UpdateAsync(int id, BattleUpdateDto model)

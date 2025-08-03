@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PokemonGameAPI.Application.Profiles;
 using PokemonGameAPI.Application.Services;
 using PokemonGameAPI.Contracts.Services;
+using PokemonGameAPI.Contracts.Settings;
 
 namespace PokemonGameAPI.Application.Extensions
 {
@@ -29,13 +30,13 @@ namespace PokemonGameAPI.Application.Extensions
             services.AddScoped<ITournamentService, TournamentService>();
             services.AddScoped<ITrainerService, TrainerService>();
             services.AddScoped<ITrainerPokemonService, TrainerPokemonService>();
+            services.AddScoped<ITrainerPokemonStatsService, TrainerPokemonStatsService>();
             services.AddScoped<IUserService, UserService>();
-
-
-
 
             services.AddFluentValidationAutoValidation();
             services.AddFluentValidationClientsideAdapters();
+            services.Configure<PokemonSettings>(configuration.GetSection("PokemonSettings"));
+
 
             return services;
         }

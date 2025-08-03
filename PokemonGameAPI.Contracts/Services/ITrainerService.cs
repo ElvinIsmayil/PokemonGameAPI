@@ -1,5 +1,6 @@
 ﻿using PokemonGameAPI.Contracts.DTOs.Pagination;
 using PokemonGameAPI.Contracts.DTOs.Trainer;
+using PokemonGameAPI.Contracts.DTOs.TrainerPokemon;
 
 namespace PokemonGameAPI.Contracts.Services
 {
@@ -11,6 +12,8 @@ namespace PokemonGameAPI.Contracts.Services
         Task<TrainerReturnDto> UpdateAsync(int id, TrainerUpdateDto model);
         Task<bool> DeleteAsync(int id);
 
-        Task AssignStarterPokemonAsync(ChooseStarterDto model);
+        Task ChooseStarterPokemonAsync(AssignPokemonDto model);
+        Task AssignPokemonToTrainerAsync(AssignPokemonDto model);
+        Task<PagedResponse<TrainerPokemonListItemDto>> GetTrainerPokemonsAsync(int trainerId, int pageNumber, int pageSize);
     }
 }

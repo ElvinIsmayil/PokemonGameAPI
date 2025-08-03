@@ -22,6 +22,13 @@ namespace PokemonGameAPI.Presentation.Controllers
             return Ok(pokemons);
         }
 
+        [HttpGet("get-starter-pokemons")]
+        public async Task<IActionResult> GetStarterPokemons()
+        {
+            var starterPokemons = await _pokemonService.GetStarterPokemonsAsync();
+            return Ok(starterPokemons);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -60,5 +67,13 @@ namespace PokemonGameAPI.Presentation.Controllers
             }
             return NoContent();
         }
+
+        [HttpPost("{id}/upload-image")]
+        public async Task<IActionResult> UploadImage(int id, IFormFile imageFile)
+        {
+            var result = await _pokemonService.UploadImgAsync(id, imageFile);
+            return Ok(result);
+        }
+
     }
 }

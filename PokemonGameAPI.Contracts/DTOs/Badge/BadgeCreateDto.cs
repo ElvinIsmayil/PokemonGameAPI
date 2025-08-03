@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace PokemonGameAPI.Contracts.DTOs.Badge
+﻿namespace PokemonGameAPI.Contracts.DTOs.Badge
 {
     public record BadgeCreateDto
     {

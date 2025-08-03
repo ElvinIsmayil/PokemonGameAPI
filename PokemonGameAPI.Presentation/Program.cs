@@ -22,6 +22,7 @@ builder.Services.RegisterAPIServices(config);
 builder.Services.RegisterInfrastructureServices(config);
 
 var app = builder.Build();
+app.UseCors("AllowAll");
 app.UseSwagger();
 app.UseSwaggerUI();
 

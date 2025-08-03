@@ -9,6 +9,5 @@
         public int AttackPoints { get; init; }
         public int DefensePoints { get; init; }
 
-        public int PokemonId { get; init; }
     }
 }

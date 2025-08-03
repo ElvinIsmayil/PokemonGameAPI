@@ -27,8 +27,6 @@ namespace PokemonGameAPI.Application.Validators.PokemonStats
             RuleFor(x => x.DefensePoints)
                 .GreaterThanOrEqualTo(0).WithMessage("DefensePoints must be 0 or greater.");
 
-            RuleFor(x => x.PokemonId)
-                .GreaterThan(0).WithMessage("PokemonId must be greater than 0.");
         }
     }
 }

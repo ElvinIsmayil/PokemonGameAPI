@@ -27,10 +27,6 @@ namespace PokemonGameAPI.Infrastructure.Persistence.Configurations
                 .HasForeignKey<Badge>(b => b.GymId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure many-to-many with Trainers
-            builder.HasMany(b => b.Trainers)
-                .WithMany(t => t.Badges)
-                .UsingEntity(j => j.ToTable("TrainerBadges"));
         }
     }
 }

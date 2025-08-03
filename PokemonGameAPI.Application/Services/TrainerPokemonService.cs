@@ -24,7 +24,7 @@ namespace PokemonGameAPI.Application.Services
         public async Task<TrainerPokemonReturnDto> CreateAsync(TrainerPokemonCreateDto model)
         {
             var entity = _mapper.Map<TrainerPokemon>(model);
-             await _repository.CreateAsync(entity);
+            await _repository.CreateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<TrainerPokemonReturnDto>(entity);
         }
@@ -40,15 +40,18 @@ namespace PokemonGameAPI.Application.Services
             {
                 throw new NotFoundException($"Entity with ID {id} not found");
             }
+            var result = await _repository.DeleteAsync(entity);
             await _unitOfWork.SaveChangesAsync();
-            return await _repository.DeleteAsync(entity);
+
+            return result;
         }
 
         public async Task<PagedResponse<TrainerPokemonListItemDto>> GetAllAsync(int pageNumber, int pageSize)
         {
             int skip = (pageNumber - 1) * pageSize;
 
-            var query = _repository.GetQuery();
+            var query = _repository.GetQuery().Include(x => x.Trainer)
+                .Include(x => x.Pokemon);
 
             int totalCount = await query.CountAsync();
 
@@ -70,7 +73,16 @@ namespace PokemonGameAPI.Application.Services
 
         public async Task<TrainerPokemonReturnDto> GetByIdAsync(int id)
         {
-            var entity = await _repository.GetEntityAsync(x => x.Id == id, asNoTracking: true);
+            var entity = await _repository.GetEntityAsync(
+                 predicate: x => x.Id == id,
+                 asNoTracking: true,
+                 includes: new Func<IQueryable<TrainerPokemon>, IQueryable<TrainerPokemon>>[]
+                 {
+                    query => query.Include(t => t.Trainer)
+                    .Include(t=>t.Pokemon)
+                    .Include(t=>t.TrainerPokemonStats)
+                 }
+                 );
             if (entity == null)
             {
                 throw new NotFoundException($"Entity with ID {id} not found");

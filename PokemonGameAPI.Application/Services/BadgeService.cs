@@ -28,7 +28,7 @@ namespace PokemonGameAPI.Application.Services
         public async Task<BadgeReturnDto> CreateAsync(BadgeCreateDto model)
         {
             var entity = _mapper.Map<Badge>(model);
-             await _repository.CreateAsync(entity);
+            await _repository.CreateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
 
             return _mapper.Map<BadgeReturnDto>(entity);
@@ -124,7 +124,7 @@ namespace PokemonGameAPI.Application.Services
             var fileValidationErrors = _imageService.ValidateFileType(imageFile);
             if (fileValidationErrors.Count > 0)
             {
-                throw new ValidationException(string.Join(",",fileValidationErrors));
+                throw new ValidationException(string.Join(",", fileValidationErrors));
             }
             (string? imageUrl, List<string> validationErrors) = await _imageService.SaveImageAsync(imageFile, folderName, entity.ImageUrl);
             if (validationErrors.Count > 0)

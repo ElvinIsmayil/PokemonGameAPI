@@ -22,16 +22,16 @@ namespace PokemonGameAPI.Application.Validators.Battle
                 .GreaterThan(x => x.StartTime).WithMessage("End time must be after start time.")
                 .When(x => x.StartTime.HasValue && x.EndTime.HasValue);
 
-            RuleFor(x => x.Trainer1Pokemons)
+            RuleFor(x => x.Trainer1BattlePokemons)
                 .NotEmpty().WithMessage("Trainer1 must have at least one Pokémon.");
 
-            RuleFor(x => x.Trainer2Pokemons)
+            RuleFor(x => x.Trainer2BattlePokemons)
                 .NotEmpty().WithMessage("Trainer2 must have at least one Pokémon.");
 
-            RuleForEach(x => x.Trainer1Pokemons)
+            RuleForEach(x => x.Trainer1BattlePokemons)
                 .GreaterThan(0).WithMessage("Pokémon IDs in Trainer1Pokemons must be greater than 0.");
 
-            RuleForEach(x => x.Trainer2Pokemons)
+            RuleForEach(x => x.Trainer2BattlePokemons)
                 .GreaterThan(0).WithMessage("Pokémon IDs in Trainer2Pokemons must be greater than 0.");
         }
     }

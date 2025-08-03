@@ -48,12 +48,6 @@ namespace PokemonGameAPI.Persistence.Configurations
                         j.ToTable("TournamentParticipants");
                     });
 
-            // One-to-many: Tournament -> Battles
-            builder.HasMany(t => t.Battles)
-         .WithOne()
-         .HasForeignKey("TournamentId")
-         .OnDelete(DeleteBehavior.Restrict); // or NoAction
-
 
             // Winner relation (optional)
             builder.HasOne(t => t.Winner)

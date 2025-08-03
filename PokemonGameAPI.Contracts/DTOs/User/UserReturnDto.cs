@@ -6,5 +6,6 @@
         public string Name { get; init; } = default!;
         public string UserName { get; init; } = default!;
         public string Email { get; init; } = default!;
+        public string ProfilePictureUrl { get; init; } = default!;
     }
 }

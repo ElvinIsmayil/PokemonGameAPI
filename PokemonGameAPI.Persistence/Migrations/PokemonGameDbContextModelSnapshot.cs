@@ -37,7 +37,7 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.ToTable("TrainerBadges", (string)null);
                 });
 
-            modelBuilder.Entity("BattlePokemon", b =>
+            modelBuilder.Entity("BattleTrainerPokemon", b =>
                 {
                     b.Property<int>("BattleId")
                         .HasColumnType("int");
@@ -52,7 +52,7 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.ToTable("Trainer1BattlePokemons", (string)null);
                 });
 
-            modelBuilder.Entity("BattlePokemon1", b =>
+            modelBuilder.Entity("BattleTrainerPokemon1", b =>
                 {
                     b.Property<int>("Battle1Id")
                         .HasColumnType("int");
@@ -276,12 +276,6 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TrainerId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TrainerId1")
-                        .HasColumnType("int");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -301,8 +295,6 @@ namespace PokemonGameAPI.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("TrainerId1");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -489,9 +481,6 @@ namespace PokemonGameAPI.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BaseStatsId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -520,9 +509,6 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("LocationId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -537,8 +523,6 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LocationId");
-
-                    b.HasIndex("LocationId1");
 
                     b.HasIndex("PokemonCategoryId");
 
@@ -644,11 +628,6 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.Property<int>("PokemonId")
                         .HasColumnType("int");
 
-                    b.Property<string>("StatsType")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -658,10 +637,6 @@ namespace PokemonGameAPI.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("PokemonStats");
-
-                    b.HasDiscriminator<string>("StatsType").HasValue("BaseStats");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("PokemonGameAPI.Domain.Entities.Tournament", b =>
@@ -732,9 +707,6 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.Property<int>("TrainerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TrainerPokemonStatsId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -745,6 +717,55 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.HasIndex("TrainerId");
 
                     b.ToTable("TrainerPokemons");
+                });
+
+            modelBuilder.Entity("PokemonGameAPI.Domain.Entities.TrainerPokemonStats", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AttackPoints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AvailableSkillPoints")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DefensePoints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExperiencePoints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HealthPoints")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxHealthPoints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TrainerPokemonId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerPokemonId")
+                        .IsUnique();
+
+                    b.ToTable("TrainerPokemonStats");
                 });
 
             modelBuilder.Entity("TournamentParticipant", b =>
@@ -772,6 +793,9 @@ namespace PokemonGameAPI.Persistence.Migrations
 
                     b.Property<string>("AppUserId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AppUserId1")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -802,26 +826,13 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.HasIndex("AppUserId")
                         .IsUnique();
 
+                    b.HasIndex("AppUserId1")
+                        .IsUnique()
+                        .HasFilter("[AppUserId1] IS NOT NULL");
+
                     b.HasIndex("GymId");
 
                     b.ToTable("Trainers");
-                });
-
-            modelBuilder.Entity("PokemonGameAPI.Domain.Entities.TrainerPokemonStats", b =>
-                {
-                    b.HasBaseType("PokemonGameAPI.Domain.Entities.PokemonStats");
-
-                    b.Property<int>("AvailableSkillPoints")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TrainerPokemonId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("TrainerPokemonId")
-                        .IsUnique()
-                        .HasFilter("[TrainerPokemonId] IS NOT NULL");
-
-                    b.HasDiscriminator().HasValue("TrainerStats");
                 });
 
             modelBuilder.Entity("BadgeTrainer", b =>
@@ -839,7 +850,7 @@ namespace PokemonGameAPI.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BattlePokemon", b =>
+            modelBuilder.Entity("BattleTrainerPokemon", b =>
                 {
                     b.HasOne("PokemonGameAPI.Domain.Entities.Battle", null)
                         .WithMany()
@@ -847,14 +858,14 @@ namespace PokemonGameAPI.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PokemonGameAPI.Domain.Entities.Pokemon", null)
+                    b.HasOne("PokemonGameAPI.Domain.Entities.TrainerPokemon", null)
                         .WithMany()
                         .HasForeignKey("Trainer1PokemonsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BattlePokemon1", b =>
+            modelBuilder.Entity("BattleTrainerPokemon1", b =>
                 {
                     b.HasOne("PokemonGameAPI.Domain.Entities.Battle", null)
                         .WithMany()
@@ -862,7 +873,7 @@ namespace PokemonGameAPI.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PokemonGameAPI.Domain.Entities.Pokemon", null)
+                    b.HasOne("PokemonGameAPI.Domain.Entities.TrainerPokemon", null)
                         .WithMany()
                         .HasForeignKey("Trainer2PokemonsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -935,15 +946,6 @@ namespace PokemonGameAPI.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PokemonGameAPI.Domain.Entities.AppUser", b =>
-                {
-                    b.HasOne("Trainer", "Trainer")
-                        .WithMany()
-                        .HasForeignKey("TrainerId1");
-
-                    b.Navigation("Trainer");
-                });
-
             modelBuilder.Entity("PokemonGameAPI.Domain.Entities.Badge", b =>
                 {
                     b.HasOne("PokemonGameAPI.Domain.Entities.Gym", "Gym")
@@ -963,8 +965,7 @@ namespace PokemonGameAPI.Persistence.Migrations
 
                     b.HasOne("PokemonGameAPI.Domain.Entities.Tournament", null)
                         .WithMany("Battles")
-                        .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("TournamentId");
 
                     b.HasOne("Trainer", "Trainer1")
                         .WithMany("BattlesAsTrainer1")
@@ -1010,14 +1011,10 @@ namespace PokemonGameAPI.Persistence.Migrations
 
             modelBuilder.Entity("PokemonGameAPI.Domain.Entities.Pokemon", b =>
                 {
-                    b.HasOne("PokemonGameAPI.Domain.Entities.Location", null)
+                    b.HasOne("PokemonGameAPI.Domain.Entities.Location", "Location")
                         .WithMany("WildPokemons")
                         .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("PokemonGameAPI.Domain.Entities.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId1");
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PokemonGameAPI.Domain.Entities.PokemonCategory", "Category")
                         .WithMany("Pokemons")
@@ -1078,6 +1075,17 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.Navigation("Trainer");
                 });
 
+            modelBuilder.Entity("PokemonGameAPI.Domain.Entities.TrainerPokemonStats", b =>
+                {
+                    b.HasOne("PokemonGameAPI.Domain.Entities.TrainerPokemon", "TrainerPokemon")
+                        .WithOne("TrainerPokemonStats")
+                        .HasForeignKey("PokemonGameAPI.Domain.Entities.TrainerPokemonStats", "TrainerPokemonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TrainerPokemon");
+                });
+
             modelBuilder.Entity("TournamentParticipant", b =>
                 {
                     b.HasOne("PokemonGameAPI.Domain.Entities.Tournament", null)
@@ -1101,6 +1109,10 @@ namespace PokemonGameAPI.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PokemonGameAPI.Domain.Entities.AppUser", null)
+                        .WithOne("Trainer")
+                        .HasForeignKey("Trainer", "AppUserId1");
+
                     b.HasOne("PokemonGameAPI.Domain.Entities.Gym", "Gym")
                         .WithMany("NpcTrainers")
                         .HasForeignKey("GymId")
@@ -1111,15 +1123,9 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.Navigation("Gym");
                 });
 
-            modelBuilder.Entity("PokemonGameAPI.Domain.Entities.TrainerPokemonStats", b =>
+            modelBuilder.Entity("PokemonGameAPI.Domain.Entities.AppUser", b =>
                 {
-                    b.HasOne("PokemonGameAPI.Domain.Entities.TrainerPokemon", "TrainerPokemon")
-                        .WithOne("TrainerPokemonStats")
-                        .HasForeignKey("PokemonGameAPI.Domain.Entities.TrainerPokemonStats", "TrainerPokemonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TrainerPokemon");
+                    b.Navigation("Trainer");
                 });
 
             modelBuilder.Entity("PokemonGameAPI.Domain.Entities.Gym", b =>

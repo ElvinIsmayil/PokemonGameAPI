@@ -29,12 +29,12 @@ namespace PokemonGameAPI.Persistence.Configurations
                    .OnDelete(DeleteBehavior.Restrict);
 
             // Many-to-many for Trainer1Pokemons participating in the battle
-            builder.HasMany(b => b.Trainer1Pokemons)
+            builder.HasMany(b => b.Trainer1BattlePokemons)
                    .WithMany()
                    .UsingEntity(j => j.ToTable("Trainer1BattlePokemons"));
 
             // Many-to-many for Trainer2Pokemons participating in the battle
-            builder.HasMany(b => b.Trainer2Pokemons)
+            builder.HasMany(b => b.Trainer2BattlePokemons)
                    .WithMany()
                    .UsingEntity(j => j.ToTable("Trainer2BattlePokemons"));
         }

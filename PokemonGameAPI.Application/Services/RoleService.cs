@@ -5,6 +5,7 @@ using PokemonGameAPI.Application.Exceptions;
 using PokemonGameAPI.Contracts.DTOs.Role;
 using PokemonGameAPI.Contracts.Services;
 using PokemonGameAPI.Domain.Entities;
+using PokemonGameAPI.Domain.Repository;
 
 namespace PokemonGameAPI.Application.Services
 {
@@ -12,13 +13,15 @@ namespace PokemonGameAPI.Application.Services
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public RoleService(RoleManager<IdentityRole> roleManager, IMapper mapper, UserManager<AppUser> userManager)
+        public RoleService(RoleManager<IdentityRole> roleManager, IMapper mapper, UserManager<AppUser> userManager, IUnitOfWork unitOfWork)
         {
             _roleManager = roleManager;
             _mapper = mapper;
             _userManager = userManager;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<RoleListItemDto>> GetAllRolesAsync()
@@ -53,6 +56,8 @@ namespace PokemonGameAPI.Application.Services
                 throw new NotFoundException("User not found with this id");
 
             var result = await _userManager.AddToRoleAsync(user, roleAssignDto.RoleId);
+            await _unitOfWork.SaveChangesAsync();
+
 
             if (!result.Succeeded)
             {

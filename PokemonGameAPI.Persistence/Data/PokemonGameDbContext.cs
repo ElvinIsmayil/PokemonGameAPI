@@ -35,13 +35,7 @@ namespace PokemonGameAPI.Persistence.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Trainer>()
-    .Ignore(t => t.Battles);
-
-            modelBuilder.Entity<PokemonStats>()
-    .HasDiscriminator<string>("StatsType")
-    .HasValue<PokemonStats>("BaseStats")
-    .HasValue<TrainerPokemonStats>("TrainerStats");
-
+            .Ignore(t => t.Battles);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(PokemonConfiguration).Assembly);
 

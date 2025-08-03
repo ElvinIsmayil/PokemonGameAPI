@@ -10,7 +10,6 @@ namespace PokemonGameAPI.Domain.Entities
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public bool IsActive { get; set; } = true;
 
-        public int? TrainerId { get; set; }
         public Trainer? Trainer { get; set; }
     }
 }

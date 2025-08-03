@@ -29,16 +29,16 @@ namespace PokemonGameAPI.Persistence.Configurations
                 .IsRequired(false);
 
             // Relations
+            builder.HasOne(p => p.Location)
+            .WithMany(l => l.WildPokemons)
+            .HasForeignKey(p => p.LocationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
             builder.HasOne(p => p.Category)
                 .WithMany(c => c.Pokemons)
                 .HasForeignKey(p => p.PokemonCategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(p => p.BaseStats)
-                .WithOne(bs => bs.Pokemon)
-                .HasForeignKey<Pokemon>(p => p.BaseStatsId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(p => p.Abilities)
                 .WithMany(a => a.Pokemons)

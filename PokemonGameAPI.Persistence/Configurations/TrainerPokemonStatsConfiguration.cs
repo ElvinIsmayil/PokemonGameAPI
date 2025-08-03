@@ -8,6 +8,7 @@ namespace PokemonGameAPI.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<TrainerPokemonStats> builder)
         {
+            builder.HasKey(tps => tps.Id);
 
             builder.Property(tps => tps.Level)
                    .IsRequired();

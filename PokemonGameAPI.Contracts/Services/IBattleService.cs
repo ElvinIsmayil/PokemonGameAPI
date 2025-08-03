@@ -10,5 +10,12 @@ namespace PokemonGameAPI.Contracts.Services
         Task<BattleReturnDto> CreateAsync(BattleCreateDto model);
         Task<BattleReturnDto> UpdateAsync(int id, BattleUpdateDto model);
         Task<bool> DeleteAsync(int id);
+
+        Task<BattleReturnDto> StartBattleAsync();
+        Task<BattleReturnDto> FinishBattleAsync(int battleId);
+        Task<BattleReturnDto> GetBattleResultAsync(int battleId);
+        Task<BattleResultDto> ExecuteTurnAsync(BattleTurnDto turn);
+
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using PokemonGameAPI.Application.Exceptions;
 using PokemonGameAPI.Contracts.DTOs.Auth;
 using PokemonGameAPI.Contracts.Services;
 using PokemonGameAPI.Contracts.Settings;
@@ -60,7 +61,7 @@ namespace PokemonGameAPI.Application.Services
             var existUser = await _userManager.FindByEmailAsync(loginDto.Email);
             var result = await _userManager.CheckPasswordAsync(existUser, loginDto.Password);
             if (!result)
-                throw new Exception("Password is incorrect");
+                throw new UnAuthorizedException("Password is incorrect");
             IList<string> roles = await _userManager.GetRolesAsync(existUser);
             var token = _tokenService.GetToken(existUser, roles);
             return new AuthResponseDto()

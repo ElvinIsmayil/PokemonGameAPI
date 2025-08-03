@@ -10,6 +10,6 @@
         public int AttackPoints { get; init; }
         public int DefensePoints { get; init; }
 
-        public int PokemonName { get; init; }
+        public string PokemonName { get; init; } = default!;
     }
 }

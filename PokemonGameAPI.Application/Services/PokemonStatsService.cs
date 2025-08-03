@@ -24,7 +24,7 @@ namespace PokemonGameAPI.Application.Services
         public async Task<PokemonStatsReturnDto> CreateAsync(PokemonStatsCreateDto model)
         {
             var entity = _mapper.Map<PokemonStats>(model);
-             await _repository.CreateAsync(entity);
+            await _repository.CreateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<PokemonStatsReturnDto>(entity);
         }
@@ -40,8 +40,10 @@ namespace PokemonGameAPI.Application.Services
             {
                 throw new NotFoundException($"Entity with ID {id} not found");
             }
+            var result = await _repository.DeleteAsync(entity);
             await _unitOfWork.SaveChangesAsync();
-            return await _repository.DeleteAsync(entity);
+
+            return result;
         }
 
         public async Task<PagedResponse<PokemonStatsListItemDto>> GetAllAsync(int pageNumber, int pageSize)

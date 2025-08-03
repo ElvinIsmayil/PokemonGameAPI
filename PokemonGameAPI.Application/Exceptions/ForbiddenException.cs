@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-
-namespace PokemonGameAPI.Application.Exceptions
+﻿namespace PokemonGameAPI.Application.Exceptions
 {
     public class ForbiddenException : Exception
     {

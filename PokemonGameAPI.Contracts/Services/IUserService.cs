@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using PokemonGameAPI.Contracts.DTOs.Pagination;
 using PokemonGameAPI.Contracts.DTOs.User;
 
@@ -9,6 +10,7 @@ namespace PokemonGameAPI.Contracts.Services
         Task<PagedResponse<UserListItemDto>> GetAllUsers(int pageNumber, int pageSize);
         Task<UserReturnDto> GetUserById(string userId);
         Task<UserReturnDto> UpdateUserAsync(string userId, UserUpdateDto user);
+        Task<UserReturnDto> UploadImgAsync(string id, IFormFile file);
         Task<IdentityResult> DeleteUser(string userId);
 
     }

@@ -1,4 +1,5 @@
-﻿using PokemonGameAPI.Contracts.DTOs.Gym;
+﻿using PokemonGameAPI.Contracts.DTOs.Badge;
+using PokemonGameAPI.Contracts.DTOs.Gym;
 using PokemonGameAPI.Contracts.DTOs.Pagination;
 
 namespace PokemonGameAPI.Contracts.Services
@@ -10,5 +11,8 @@ namespace PokemonGameAPI.Contracts.Services
         Task<GymReturnDto> CreateAsync(GymCreateDto model);
         Task<GymReturnDto> UpdateAsync(int id, GymUpdateDto model);
         Task<bool> DeleteAsync(int id);
+
+        Task<BadgeReturnDto> AwardBadgeAsync(AwardBadgeDto model);
+
     }
 }

@@ -24,10 +24,6 @@ public class TrainerConfiguration : IEntityTypeConfiguration<Trainer>
                .IsRequired()
                .OnDelete(DeleteBehavior.Cascade);
 
-        // Many-to-many with Badge
-        builder.HasMany(t => t.Badges)
-               .WithMany(b => b.Trainers);
-
         // One-to-many with TrainerPokemon
         builder.HasMany(t => t.TrainerPokemons)
                .WithOne(tp => tp.Trainer)

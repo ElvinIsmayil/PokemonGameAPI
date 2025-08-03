@@ -22,7 +22,6 @@ namespace PokemonGameAPI.Persistence.Repository
             try
             {
                 await _table.AddAsync(entity);
-                await _context.SaveChangesAsync();
                 return entity;
             }
             catch (Exception ex)
@@ -36,7 +35,6 @@ namespace PokemonGameAPI.Persistence.Repository
             try
             {
                 _table.Update(entity);
-                await _context.SaveChangesAsync();
                 return entity;
             }
             catch (Exception ex)
@@ -51,7 +49,6 @@ namespace PokemonGameAPI.Persistence.Repository
             {
                 entity.IsDeleted = true;
                 _table.Update(entity);
-                await _context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)

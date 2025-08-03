@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using PokemonGameAPI.Application.Exceptions;
 using System.Text.Json;
 

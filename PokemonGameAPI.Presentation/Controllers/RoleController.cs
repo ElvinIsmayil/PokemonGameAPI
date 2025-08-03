@@ -16,7 +16,7 @@ namespace PokemonGameAPI.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
         {
             return Ok(await _roleService.GetAllRolesAsync());
         }

@@ -36,46 +36,40 @@ namespace PokemonGameAPI.Application.Profiles
 
             // Battle
             CreateMap<Battle, BattleReturnDto>()
-                .ForMember(dest => dest.Trainer1Name, opt => opt.MapFrom(src => src.Trainer1.Name))
-                .ForMember(dest => dest.Trainer2Name, opt => opt.MapFrom(src => src.Trainer2.Name))
-                .ForMember(dest => dest.WinnerName, opt => opt.MapFrom(src => src.Winner != null ? src.Winner.Name : string.Empty));
+      .ForMember(dest => dest.Trainer1Name, opt => opt.MapFrom(src => src.Trainer1.Name))
+      .ForMember(dest => dest.Trainer2Name, opt => opt.MapFrom(src => src.Trainer2.Name))
+      .ForMember(dest => dest.WinnerName, opt => opt.MapFrom(src => src.Winner != null ? src.Winner.Name : string.Empty))
+      .ForMember(dest => dest.Trainer1BattlePokemons, opt => opt.MapFrom(src => src.Trainer1BattlePokemons))
+      .ForMember(dest => dest.Trainer2BattlePokemons, opt => opt.MapFrom(src => src.Trainer2BattlePokemons));
+
             CreateMap<Battle, BattleListItemDto>();
             CreateMap<BattleCreateDto, Battle>()
-                .ForMember(dest => dest.Trainer1Id, opt => opt.Ignore())
-                .ForMember(dest => dest.Trainer2Id, opt => opt.Ignore())
-                .ReverseMap();
+              .ForMember(dest => dest.Trainer1BattlePokemons, opt => opt.Ignore())
+              .ForMember(dest => dest.Trainer2BattlePokemons, opt => opt.Ignore());
+
             CreateMap<BattleUpdateDto, Battle>()
-                .ForMember(dest => dest.Trainer1Id, opt => opt.Ignore())
-                .ForMember(dest => dest.Trainer2Id, opt => opt.Ignore())
-                .ReverseMap();
+     .ForMember(dest => dest.Trainer1BattlePokemons, opt => opt.Ignore())
+     .ForMember(dest => dest.Trainer2BattlePokemons, opt => opt.Ignore());
 
             // Gym
             CreateMap<Gym, GymReturnDto>();
-            CreateMap<Gym, GymListItemDto>()
-                .ForMember(dest => dest.LocationName, opt => opt.MapFrom(src => src.Location.Name));
-            CreateMap<GymCreateDto, Gym>()
-                .ForMember(dest => dest.LocationId, opt => opt.Ignore())
-                .ReverseMap();
+            CreateMap<Gym, GymListItemDto>();
+            CreateMap<GymCreateDto, Gym>().ReverseMap();
             CreateMap<GymUpdateDto, Gym>().ReverseMap();
 
-            // Location
-            CreateMap<Location, LocationReturnDto>()
-                // Assuming you want to map collections of related DTOs, 
-                // but projecting them like this may fail in EF Core queries, be cautious.
-                .ForMember(dest => dest.WildPokemonIds, opt => opt.MapFrom(src => src.WildPokemons.Select(p => new PokemonListItemDto { Id = p.Id, Name = p.Name })))
-                .ForMember(dest => dest.GymIds, opt => opt.MapFrom(src => src.Gyms.Select(g => new GymListItemDto { Id = g.Id, Name = g.Name })))
-                .ForMember(dest => dest.TournamentIds, opt => opt.MapFrom(src => src.Tournaments.Select(t => new TournamentListItemDto { Id = t.Id, Name = t.Name })));
+            // Pokemon
+            CreateMap<Pokemon, PokemonReturnDto>()
+            .ForMember(dest => dest.PokemonCategoryName, opt => opt.MapFrom(src => src.Category.Name))
+            .ForMember(dest => dest.LocationName, opt => opt.MapFrom(src => src.Location != null ? src.Location.Name : null))
+            .ForMember(dest => dest.Abilities, opt => opt.MapFrom(src => src.Abilities))
+            .ForMember(dest => dest.BaseStats, opt => opt.MapFrom(src => src.BaseStats))
+            .ForMember(dest => dest.TrainerPokemons, opt => opt.MapFrom(src => src.TrainerPokemons));
 
-            CreateMap<Location, LocationListItemDto>()
-                .ForMember(dest => dest.WildPokemonCount, opt => opt.MapFrom(src => src.WildPokemons.Count))
-                .ForMember(dest => dest.GymCount, opt => opt.MapFrom(src => src.Gyms.Count))
-                .ForMember(dest => dest.TournamentCount, opt => opt.MapFrom(src => src.Tournaments.Count));
-            CreateMap<LocationCreateDto, Location>()
-                .ForMember(dest => dest.WildPokemons, opt => opt.Ignore())
-                .ForMember(dest => dest.Gyms, opt => opt.Ignore())
-                .ForMember(dest => dest.Tournaments, opt => opt.Ignore())
-                .ReverseMap();
-            CreateMap<LocationUpdateDto, Location>().ReverseMap();
+            CreateMap<Pokemon, PokemonListItemDto>()
+                .ForMember(dest => dest.PokemonCategoryName, opt => opt.MapFrom(src => src.Category.Name))
+                .ForMember(dest => dest.LocationName, opt => opt.MapFrom(src => src.Location != null ? src.Location.Name : null));
+            CreateMap<PokemonCreateDto, Pokemon>().ReverseMap();
+            CreateMap<PokemonUpdateDto, Pokemon>().ReverseMap();
 
             // Pokemon Category
             CreateMap<PokemonCategory, PokemonCategoryReturnDto>();
@@ -98,9 +92,9 @@ namespace PokemonGameAPI.Application.Profiles
                 .ForMember(dest => dest.PokemonName, opt => opt.MapFrom(src => src.Pokemon.Name));
             CreateMap<PokemonStats, PokemonStatsListItemDto>();
 
-            CreateMap<PokemonStats,TrainerPokemonStats>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore()) 
-                .ForMember(dest => dest.TrainerPokemonId, opt => opt.Ignore()) // 
+            CreateMap<PokemonStats, TrainerPokemonStats>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.TrainerPokemonId, opt => opt.Ignore())
                 .ReverseMap();
 
 
@@ -149,7 +143,7 @@ namespace PokemonGameAPI.Application.Profiles
             CreateMap<TrainerPokemon, TrainerPokemonReturnDto>()
                 .ForMember(dest => dest.TrainerName, opt => opt.MapFrom(src => src.Trainer.Name))
                 .ForMember(dest => dest.PokemonName, opt => opt.MapFrom(src => src.Pokemon.Name))
-                .ForMember(dest => dest.TrainerPokemonStatsDto, opt => opt.MapFrom(src => src.TrainerPokemonStats));
+                .ForMember(dest => dest.TrainerPokemonStats, opt => opt.MapFrom(src => src.TrainerPokemonStats));
 
             CreateMap<TrainerPokemon, TrainerPokemonListItemDto>()
                 .ForMember(dest => dest.PokemonName, opt => opt.MapFrom(src => src.Pokemon.Name));
@@ -172,6 +166,23 @@ namespace PokemonGameAPI.Application.Profiles
             CreateMap<AppUser, UserReturnDto>();
             CreateMap<AppUser, UserListItemDto>();
             CreateMap<UserUpdateDto, AppUser>().ReverseMap();
+
+            // TrinerPokemonStats to PokemonStats mapping
+            CreateMap<PokemonStatsReturnDto, TrainerPokemonStatsReturnDto>();
+            CreateMap<PokemonStatsListItemDto, TrainerPokemonStatsListItemDto>();
+            CreateMap<PokemonStatsCreateDto, TrainerPokemonStatsCreateDto>()
+                .ForMember(dest => dest.TrainerPokemonId, opt => opt.Ignore()) // handled in service
+                .ReverseMap();
+            CreateMap<PokemonStatsUpdateDto, TrainerPokemonStatsUpdateDto>()
+                .ForMember(dest => dest.TrainerPokemonId, opt => opt.Ignore()) // handled in service
+                .ReverseMap();
+
+            // PokemonStats to TrainerPokemonStats mapping
+            CreateMap<PokemonStatsListItemDto, TrainerPokemonStats>()
+    .ForMember(dest => dest.Id, opt => opt.Ignore()) // ehtiyac varsa
+    .ForMember(dest => dest.TrainerPokemonId, opt => opt.Ignore()); // lazımdırsa
+
+
         }
     }
 }

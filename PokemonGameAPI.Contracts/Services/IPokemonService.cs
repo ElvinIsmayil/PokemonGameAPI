@@ -1,4 +1,5 @@
-﻿using PokemonGameAPI.Contracts.DTOs.Pagination;
+﻿using Microsoft.AspNetCore.Http;
+using PokemonGameAPI.Contracts.DTOs.Pagination;
 using PokemonGameAPI.Contracts.DTOs.Pokemon;
 
 namespace PokemonGameAPI.Contracts.Services
@@ -9,6 +10,9 @@ namespace PokemonGameAPI.Contracts.Services
         Task<PokemonReturnDto> GetByIdAsync(int id);
         Task<PokemonReturnDto> CreateAsync(PokemonCreateDto model);
         Task<PokemonReturnDto> UpdateAsync(int id, PokemonUpdateDto model);
+        Task<PokemonReturnDto> UploadImgAsync(int id, IFormFile file);
         Task<bool> DeleteAsync(int id);
+
+        Task<IEnumerable<PokemonReturnDto>> GetStarterPokemonsAsync();
     }
 }

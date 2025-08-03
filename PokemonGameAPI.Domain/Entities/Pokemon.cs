@@ -16,7 +16,6 @@ namespace PokemonGameAPI.Domain.Entities
         public int? LocationId { get; set; }
         public Location? Location { get; set; }
 
-        public int BaseStatsId { get; set; }
         public PokemonStats BaseStats { get; set; } = default!;
 
         public ICollection<PokemonAbility> Abilities { get; set; } = new List<PokemonAbility>();

@@ -11,6 +11,6 @@ namespace PokemonGameAPI.Domain.Entities
         public int GymId { get; set; }
         public Gym Gym { get; set; } = default!;
 
-        public ICollection<Trainer> Trainers { get; set; } = new List<Trainer>();
+        public ICollection<TrainerBadge> TrainerBadges { get; set; } = new List<TrainerBadge>();
     }
 }

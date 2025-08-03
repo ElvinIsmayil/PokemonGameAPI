@@ -7,6 +7,16 @@ namespace PokemonGameAPI.Presentation.Extensions
     {
         public static IServiceCollection RegisterAPIServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -38,6 +48,8 @@ namespace PokemonGameAPI.Presentation.Extensions
 
             services.AddExceptionHandler<NotFoundExceptionHandler>();
             services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddExceptionHandler<ValidationExceptionHandler>();
+            services.AddExceptionHandler<UnauthorizedExceptionHandler>();
             services.AddProblemDetails();
             return services;
         }

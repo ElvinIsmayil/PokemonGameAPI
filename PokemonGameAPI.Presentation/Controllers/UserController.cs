@@ -39,5 +39,12 @@ namespace PokemonGameAPI.Presentation.Controllers
             await _userService.UpdateUserAsync(userId, user);
             return Ok();
         }
+
+        [HttpPost("{id}/upload-image")]
+        public async Task<IActionResult> UploadImage(string id, IFormFile imageFile)
+        {
+            var result = await _userService.UploadImgAsync(id, imageFile);
+            return Ok(result);
+        }
     }
 }

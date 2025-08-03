@@ -14,8 +14,8 @@ namespace PokemonGameAPI.Domain.Entities
         public int Trainer2Id { get; set; }
         public Trainer Trainer2 { get; set; } = default!;
 
-        public ICollection<Pokemon> Trainer1Pokemons { get; set; } = new List<Pokemon>();
-        public ICollection<Pokemon> Trainer2Pokemons { get; set; } = new List<Pokemon>();
+        public ICollection<BattlePokemon> Trainer1BattlePokemons { get; set; } = new List<BattlePokemon>();
+        public ICollection<BattlePokemon> Trainer2BattlePokemons { get; set; } = new List<BattlePokemon>();
 
         public int? WinnerId { get; set; }
         public Trainer? Winner { get; set; }
