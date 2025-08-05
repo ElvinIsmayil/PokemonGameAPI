@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PokemonGameAPI.Domain.Entities;
 
 public class TrainerConfiguration : IEntityTypeConfiguration<Trainer>
 {

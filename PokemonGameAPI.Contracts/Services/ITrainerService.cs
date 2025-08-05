@@ -4,16 +4,10 @@ using PokemonGameAPI.Contracts.DTOs.TrainerPokemon;
 
 namespace PokemonGameAPI.Contracts.Services
 {
-    public interface ITrainerService
+    public interface ITrainerService : IGenericService<Trainer, TrainerRequestDto, TrainerResponseDto>
     {
-        Task<PagedResponse<TrainerListItemDto>> GetAllAsync(int pageNumber, int pageSize);
-        Task<TrainerReturnDto> GetByIdAsync(int id);
-        Task<TrainerReturnDto> CreateAsync(TrainerCreateDto model);
-        Task<TrainerReturnDto> UpdateAsync(int id, TrainerUpdateDto model);
-        Task<bool> DeleteAsync(int id);
-
         Task ChooseStarterPokemonAsync(AssignPokemonDto model);
         Task AssignPokemonToTrainerAsync(AssignPokemonDto model);
-        Task<PagedResponse<TrainerPokemonListItemDto>> GetTrainerPokemonsAsync(int trainerId, int pageNumber, int pageSize);
+        Task<PagedResponse<TrainerPokemonResponseDto>> GetTrainerPokemonsAsync(int trainerId, int pageNumber, int pageSize);
     }
 }

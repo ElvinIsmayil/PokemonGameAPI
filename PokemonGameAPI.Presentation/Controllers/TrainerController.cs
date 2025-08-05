@@ -45,7 +45,7 @@ namespace PokemonGameAPI.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TrainerCreateDto model)
+        public async Task<IActionResult> Create([FromBody] TrainerRequestDto model)
         {
             var createdTrainer = await _trainerService.CreateAsync(model);
             return CreatedAtAction(nameof(GetById), new { id = createdTrainer.Id }, createdTrainer);
@@ -53,7 +53,7 @@ namespace PokemonGameAPI.Presentation.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] TrainerUpdateDto model)
+        public async Task<IActionResult> Update(int id, [FromBody] TrainerRequestDto model)
         {
             var updatedTrainer = await _trainerService.UpdateAsync(id, model);
             if (updatedTrainer == null)

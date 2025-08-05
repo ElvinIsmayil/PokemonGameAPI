@@ -1,14 +1,10 @@
-﻿using PokemonGameAPI.Contracts.DTOs.Pagination;
-using PokemonGameAPI.Contracts.DTOs.Tournament;
+﻿using PokemonGameAPI.Contracts.DTOs.Tournament;
+using PokemonGameAPI.Domain.Entities;
 
 namespace PokemonGameAPI.Contracts.Services
 {
-    public interface ITournamentService
+    public interface ITournamentService : IGenericService<Tournament, TournamentRequestDto, TournamentResponseDto>
     {
-        Task<PagedResponse<TournamentListItemDto>> GetAllAsync(int pageNumber, int pageSize);
-        Task<TournamentReturnDto> GetByIdAsync(int id);
-        Task<TournamentReturnDto> CreateAsync(TournamentCreateDto model);
-        Task<TournamentReturnDto> UpdateAsync(int id, TournamentUpdateDto model);
-        Task<bool> DeleteAsync(int id);
+
     }
 }

@@ -3,7 +3,7 @@ using PokemonGameAPI.Contracts.DTOs.Tournament;
 
 namespace PokemonGameAPI.Application.Validators.Tournament
 {
-    public class TournamentCreateDtoValidator : AbstractValidator<TournamentCreateDto>
+    public class TournamentCreateDtoValidator : AbstractValidator<TournamentRequestDto>
     {
         public TournamentCreateDtoValidator()
         {

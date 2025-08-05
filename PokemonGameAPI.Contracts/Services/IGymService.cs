@@ -1,18 +1,12 @@
 ﻿using PokemonGameAPI.Contracts.DTOs.Badge;
 using PokemonGameAPI.Contracts.DTOs.Gym;
-using PokemonGameAPI.Contracts.DTOs.Pagination;
+using PokemonGameAPI.Domain.Entities;
 
 namespace PokemonGameAPI.Contracts.Services
 {
-    public interface IGymService
+    public interface IGymService : IGenericService<Gym, GymRequestDto, GymResponseDto>
     {
-        Task<PagedResponse<GymListItemDto>> GetAllAsync(int pageNumber, int pageSize);
-        Task<GymReturnDto> GetByIdAsync(int id);
-        Task<GymReturnDto> CreateAsync(GymCreateDto model);
-        Task<GymReturnDto> UpdateAsync(int id, GymUpdateDto model);
-        Task<bool> DeleteAsync(int id);
-
-        Task<BadgeReturnDto> AwardBadgeAsync(AwardBadgeDto model);
+        Task<BadgeResponseDto> AwardBadgeAsync(AwardBadgeDto model);
 
     }
 }

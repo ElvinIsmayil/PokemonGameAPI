@@ -1,17 +1,12 @@
 ﻿using PokemonGameAPI.Contracts.DTOs.Pagination;
 using PokemonGameAPI.Contracts.DTOs.PokemonAbility;
+using PokemonGameAPI.Domain.Entities;
 
 namespace PokemonGameAPI.Contracts.Services
 {
-    public interface IPokemonAbilityService
+    public interface IPokemonAbilityService : IGenericService<PokemonAbility, PokemonAbilityRequestDto, PokemonAbilityResponseDto>
     {
-        Task<PagedResponse<PokemonAbilityListItemDto>> GetAllAsync(int pageNumber, int pageSize);
-        Task<PokemonAbilityReturnDto> GetByIdAsync(int id);
-        Task<PokemonAbilityReturnDto> CreateAsync(PokemonAbilityCreateDto model);
-        Task<PokemonAbilityReturnDto> UpdateAsync(int id, PokemonAbilityUpdateDto model);
-        Task<bool> DeleteAsync(int id);
-
-        Task<List<PokemonAbilityListItemDto>> GetAllAbilitiesByPokemonIdAsync(int pokemonId);
-        Task<PokemonAbilityReturnDto> AssignPokemonAbility(PokemonAbilityAssignDto model);
+        Task<PagedResponse<PokemonAbilityResponseDto>> GetAllAbilitiesByPokemonIdAsync(int pokemonId);
+        Task<PokemonAbilityResponseDto> AssignPokemonAbility(PokemonAbilityAssignDto model);
     }
 }

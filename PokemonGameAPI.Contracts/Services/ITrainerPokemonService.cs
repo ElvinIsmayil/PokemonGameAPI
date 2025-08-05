@@ -1,18 +1,13 @@
-﻿using PokemonGameAPI.Contracts.DTOs.Pagination;
-using PokemonGameAPI.Contracts.DTOs.TrainerPokemon;
+﻿using PokemonGameAPI.Contracts.DTOs.TrainerPokemon;
 
+using PokemonGameAPI.Domain.Entities;
 namespace PokemonGameAPI.Contracts.Services
 {
-    public interface ITrainerPokemonService
+    public interface ITrainerPokemonService : IGenericService<TrainerPokemon, TrainerPokemonRequestDto, TrainerPokemonResponseDto>
     {
-        Task<PagedResponse<TrainerPokemonListItemDto>> GetAllAsync(int pageNumber, int pageSize);
-        Task<TrainerPokemonReturnDto> GetByIdAsync(int id);
-        Task<TrainerPokemonReturnDto> CreateAsync(TrainerPokemonCreateDto model);
-        Task<TrainerPokemonReturnDto> UpdateAsync(int id, TrainerPokemonUpdateDto model);
-        Task<bool> DeleteAsync(int id);
 
         Task LevelUpAsync(LevelUpDto model);
         Task EvolveAsync(int trainerPokemonId);
-        Task<TrainerPokemonReturnDto> GainExperienceAsync(LevelUpDto model);
+        Task<TrainerPokemonResponseDto> GainExperienceAsync(LevelUpDto model);
     }
 }

@@ -21,7 +21,7 @@ namespace PokemonGameAPI.Persistence.Extensions
             });
 
             // Register repositories and unit of work
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

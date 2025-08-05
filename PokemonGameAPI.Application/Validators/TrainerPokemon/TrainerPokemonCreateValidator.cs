@@ -3,7 +3,7 @@ using PokemonGameAPI.Contracts.DTOs.TrainerPokemon;
 
 namespace PokemonGameAPI.Application.Validators.TrainerPokemon
 {
-    public class TrainerPokemonCreateDtoValidator : AbstractValidator<TrainerPokemonCreateDto>
+    public class TrainerPokemonCreateDtoValidator : AbstractValidator<TrainerPokemonRequestDto>
     {
         public TrainerPokemonCreateDtoValidator()
         {

@@ -7,9 +7,9 @@ namespace PokemonGameAPI.Application.Services
 {
     public class LogDataService : ILogDataService
     {
-        private readonly IRepository<LogData> _repository;
+        private readonly IGenericRepository<LogData> _repository;
 
-        public LogDataService(IRepository<LogData> repository)
+        public LogDataService(IGenericRepository<LogData> repository)
         {
             _repository = repository;
         }

@@ -39,14 +39,14 @@ namespace PokemonGameAPI.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] PokemonCategoryCreateDto category)
+        public async Task<IActionResult> Create([FromBody] PokemonCategoryRequestDto category)
         {
             var createdCategory = await _pokemonCategoryService.CreateAsync(category);
             return CreatedAtAction(nameof(GetById), new { id = createdCategory.Id }, createdCategory);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] PokemonCategoryUpdateDto category)
+        public async Task<IActionResult> Update(int id, [FromBody] PokemonCategoryRequestDto category)
         {
             if (id <= 0)
             {

@@ -10,107 +10,44 @@ using PokemonGameAPI.Domain.Repository;
 
 namespace PokemonGameAPI.Application.Services
 {
-    public class BadgeService : IBadgeService
+    public class BadgeService : GenericService<Badge, BadgeRequestDto, BadgeResponseDto>, IBadgeService
     {
-        private readonly IRepository<Badge> _repository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+
         private readonly IImageService _imageService;
         private const string folderName = "badges";
 
-        public BadgeService(IRepository<Badge> repository, IUnitOfWork unitOfWork, IMapper mapper, IImageService imageService)
+        public BadgeService(IGenericRepository<Badge> repository, IUnitOfWork unitOfWork, IMapper mapper, IImageService imageService) : base(repository, unitOfWork, mapper)
         {
-            _repository = repository;
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
             _imageService = imageService;
         }
-        public async Task<BadgeReturnDto> CreateAsync(BadgeCreateDto model)
-        {
-            var entity = _mapper.Map<Badge>(model);
-            await _repository.CreateAsync(entity);
-            await _unitOfWork.SaveChangesAsync();
 
-            return _mapper.Map<BadgeReturnDto>(entity);
+        public override Task<BadgeResponseDto> GetByIdAsync(int id, params Func<IQueryable<Badge>, IQueryable<Badge>>[] includes)
+        {
+            if (includes == null || includes.Length == 0)
+            {
+                includes = new Func<IQueryable<Badge>, IQueryable<Badge>>[]
+                {
+                     q => q.Include(b => b.Gym)
+                };
+            }
+            ;
+
+            return base.GetByIdAsync(id, includes);
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public override async Task<PagedResponse<BadgeResponseDto>> GetAllAsync(int pageNumber, int pageSize, params Func<IQueryable<Badge>, IQueryable<Badge>>[] includes)
         {
-            if (id <= 0)
+            if (includes == null || includes.Length == 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "ID must be greater than zero");
+                includes = new Func<IQueryable<Badge>, IQueryable<Badge>>[]
+                {
+                     q => q.Include(b => b.Gym),
+                };
             }
-
-            var entity = await _repository.GetEntityAsync(x => x.Id == id);
-            if (entity == null)
-            {
-                throw new NotFoundException($"Entity with ID {id} not found");
-            }
-
-            if (!string.IsNullOrEmpty(entity.ImageUrl))
-            {
-                _imageService.DeleteImage(entity.ImageUrl);
-            }
-
-            var result = await _repository.DeleteAsync(entity);
-            await _unitOfWork.SaveChangesAsync();
-
-            return result;
+            return await base.GetAllAsync(pageNumber, pageSize, includes);
         }
 
-
-        public async Task<PagedResponse<BadgeListItemDto>> GetAllAsync(int pageNumber, int pageSize)
-        {
-            int skip = (pageNumber - 1) * pageSize;
-
-            var query = _repository.GetQuery();
-
-            int totalCount = await query.CountAsync();
-
-            var entities = await query
-                .Skip(skip)
-                .Take(pageSize)
-                .ToListAsync();
-
-            var data = _mapper.Map<List<BadgeListItemDto>>(entities);
-
-            return new PagedResponse<BadgeListItemDto>
-            {
-                Data = data,
-                TotalCount = totalCount,
-                PageSize = pageSize,
-                CurrentPage = pageNumber
-            };
-        }
-
-        public async Task<BadgeReturnDto> GetByIdAsync(int id)
-        {
-            var entity = await _repository.GetEntityAsync(x => x.Id == id, asNoTracking: true);
-            if (entity == null)
-            {
-                throw new NotFoundException($"Entity with ID {id} not found");
-            }
-            return _mapper.Map<BadgeReturnDto>(entity);
-
-        }
-
-        public async Task<BadgeReturnDto> UpdateAsync(int id, BadgeUpdateDto model)
-        {
-            var existingEntity = await _repository.GetEntityAsync(x => x.Id == id);
-            if (existingEntity == null)
-            {
-                throw new NotFoundException($"Entity with ID {id} not found");
-            }
-
-            _mapper.Map(model, existingEntity);
-
-            var updatedEntity = await _repository.UpdateAsync(existingEntity);
-            await _unitOfWork.SaveChangesAsync();
-
-            return _mapper.Map<BadgeReturnDto>(updatedEntity);
-        }
-
-        public async Task<BadgeReturnDto> UploadImgAsync(int id, IFormFile imageFile)
+        public async Task<BadgeResponseDto> UploadImgAsync(int id, IFormFile imageFile)
         {
             if (id <= 0)
             {
@@ -134,7 +71,7 @@ namespace PokemonGameAPI.Application.Services
             entity.ImageUrl = imageUrl;
             var updatedEntity = await _repository.UpdateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
-            return _mapper.Map<BadgeReturnDto>(updatedEntity);
+            return _mapper.Map<BadgeResponseDto>(updatedEntity);
         }
 
     }

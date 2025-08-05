@@ -3,7 +3,7 @@ using PokemonGameAPI.Contracts.DTOs.Badge;
 
 namespace PokemonGameAPI.Application.Validators.BadgeValidator
 {
-    public class BadgeCreateValidator : AbstractValidator<BadgeCreateDto>
+    public class BadgeCreateValidator : AbstractValidator<BadgeRequestDto>
     {
         public BadgeCreateValidator()
         {
@@ -14,8 +14,6 @@ namespace PokemonGameAPI.Application.Validators.BadgeValidator
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Description is required.")
                 .MaximumLength(500).WithMessage("Description cannot exceed 500 characters.");
-
-
 
         }
     }

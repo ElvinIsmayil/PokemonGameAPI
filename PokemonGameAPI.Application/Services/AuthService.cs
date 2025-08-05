@@ -13,11 +13,11 @@ namespace PokemonGameAPI.Application.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
-        private readonly IRepository<Trainer> _trainerRepository;
+        private readonly IGenericRepository<Trainer> _trainerRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly JwtSettings _jwtSettings;
 
-        public AuthService(UserManager<AppUser> userManager, ITokenService tokenService, IOptions<JwtSettings> jwtOptions, IRepository<Trainer> trainerRepository, IUnitOfWork unitOfWork)
+        public AuthService(UserManager<AppUser> userManager, ITokenService tokenService, IOptions<JwtSettings> jwtOptions, IGenericRepository<Trainer> trainerRepository, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _tokenService = tokenService;

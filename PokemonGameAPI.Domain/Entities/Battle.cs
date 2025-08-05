@@ -17,7 +17,7 @@ namespace PokemonGameAPI.Domain.Entities
 
         public ICollection<BattlePokemon> BattlePokemons { get; set; } = new List<BattlePokemon>();
 
-        public BattleResult BattleResult { get; set; } = BattleResult.Pending;   
+        public BattleResult BattleResult { get; set; } = BattleResult.Pending;
 
     }
 }

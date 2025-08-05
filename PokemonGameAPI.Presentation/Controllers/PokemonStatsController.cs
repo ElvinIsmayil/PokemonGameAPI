@@ -42,7 +42,7 @@ namespace PokemonGameAPI.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] PokemonStatsCreateDto model)
+        public async Task<IActionResult> Create([FromBody] PokemonStatsRequestDto model)
         {
             var createdStats = await _pokemonStatsService.CreateAsync(model);
             if (createdStats == null)
@@ -53,7 +53,7 @@ namespace PokemonGameAPI.Presentation.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] PokemonStatsUpdateDto model)
+        public async Task<IActionResult> Update(int id, [FromBody] PokemonStatsRequestDto model)
         {
             if (id <= 0)
             {

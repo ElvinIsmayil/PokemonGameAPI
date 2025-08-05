@@ -32,13 +32,13 @@ namespace PokemonGameAPI.Presentation.Controllers
             return Ok(ability);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] PokemonAbilityCreateDto model)
+        public async Task<IActionResult> Create([FromBody] PokemonAbilityRequestDto model)
         {
             var createdAbility = await _pokemonAbilityService.CreateAsync(model);
             return CreatedAtAction(nameof(GetById), new { id = createdAbility.Id }, createdAbility);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] PokemonAbilityUpdateDto model)
+        public async Task<IActionResult> Update(int id, [FromBody] PokemonAbilityRequestDto model)
         {
             var updatedAbility = await _pokemonAbilityService.UpdateAsync(id, model);
             if (updatedAbility == null)
@@ -75,7 +75,7 @@ namespace PokemonGameAPI.Presentation.Controllers
         public async Task<IActionResult> GetPokemonAbilities(int pokemonId)
         {
             var abilities = await _pokemonAbilityService.GetAllAbilitiesByPokemonIdAsync(pokemonId);
-            if (abilities == null || !abilities.Any())
+            if (abilities == null)
             {
                 return NotFound();
             }

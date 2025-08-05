@@ -3,7 +3,7 @@ using PokemonGameAPI.Contracts.DTOs.PokemonCategory;
 
 namespace PokemonGameAPI.Application.Validators.PokemonCategoryValidator
 {
-    public class PokemonCategoryCreateValidator : AbstractValidator<PokemonCategoryCreateDto>
+    public class PokemonCategoryCreateValidator : AbstractValidator<PokemonCategoryRequestDto>
     {
         public PokemonCategoryCreateValidator()
         {

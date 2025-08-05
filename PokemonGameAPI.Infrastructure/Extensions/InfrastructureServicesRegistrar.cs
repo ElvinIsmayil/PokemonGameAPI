@@ -4,9 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using PokemonGameAPI.Contracts.Services;
+using PokemonGameAPI.Contracts.Settings;
 using PokemonGameAPI.Domain.Entities;
 using PokemonGameAPI.Infrastructure.Services;
-using PokemonGameAPI.Infrastructure.Settings;
 using PokemonGameAPI.Persistence.Data;
 using System.Text;
 
@@ -37,7 +37,7 @@ namespace PokemonGameAPI.Infrastructure.Extensions
             // Read JwtSettings values immediately for use in JWT authentication setup
             var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>();
 
-            if (jwtSettings == null || string.IsNullOrWhiteSpace(jwtSettings.secretKey))
+            if (jwtSettings == null || string.IsNullOrWhiteSpace(jwtSettings.SecretKey))
             {
                 throw new Exception("JWT SecretKey is missing or empty in configuration.");
             }
@@ -58,7 +58,7 @@ namespace PokemonGameAPI.Infrastructure.Extensions
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.secretKey)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
                     ClockSkew = TimeSpan.Zero
                 };
             });

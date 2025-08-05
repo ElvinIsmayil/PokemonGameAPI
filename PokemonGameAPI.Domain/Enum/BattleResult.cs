@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PokemonGameAPI.Domain.Enum
+﻿namespace PokemonGameAPI.Domain.Enum
 {
     public enum BattleResult
     {

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PokemonGameAPI.Contracts.DTOs.Badge;
 using PokemonGameAPI.Contracts.DTOs.Gym;
 using PokemonGameAPI.Contracts.Services;
 
@@ -23,7 +22,7 @@ namespace PokemonGameAPI.Presentation.Controllers
             return Ok(gyms);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] GymCreateDto model)
+        public async Task<IActionResult> Create([FromBody] GymRequestDto model)
         {
             var createdGym = await _gymService.CreateAsync(model);
             return CreatedAtAction(nameof(GetById), new { id = createdGym.Id }, createdGym);
@@ -40,7 +39,7 @@ namespace PokemonGameAPI.Presentation.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] GymUpdateDto model)
+        public async Task<IActionResult> Update(int id, [FromBody] GymRequestDto model)
         {
             var updatedGym = await _gymService.UpdateAsync(id, model);
             if (updatedGym == null)
@@ -60,16 +59,16 @@ namespace PokemonGameAPI.Presentation.Controllers
             return NoContent();
         }
 
-        [HttpPost("award-badge")]
-        public async Task<IActionResult> AwardBadge([FromBody] AwardBadgeDto model)
-        {
-            var result = await _gymService.AwardBadgeAsync(model);
-            if (result is null)
-            {
-                return NotFound();
-            }
-            return NoContent();
-        }
+        //[HttpPost("award-badge")]
+        //public async Task<IActionResult> AwardBadge([FromBody] AwardBadgeDto model)
+        //{
+        //    var result = await _gymService.AwardBadgeAsync(model);
+        //    if (result is null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return NoContent();
+        //}
 
 
 

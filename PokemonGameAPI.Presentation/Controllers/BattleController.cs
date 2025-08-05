@@ -34,14 +34,14 @@ namespace PokemonGameAPI.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BattleCreateDto model)
+        public async Task<IActionResult> Create([FromBody] BattleRequestDto model)
         {
             var createdBattle = await _battleService.CreateAsync(model);
             return CreatedAtAction(nameof(GetById), new { id = createdBattle.Id }, createdBattle);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] BattleUpdateDto model)
+        public async Task<IActionResult> Update(int id, [FromBody] BattleRequestDto model)
         {
             var updatedBattle = await _battleService.UpdateAsync(id, model);
             if (updatedBattle == null)

@@ -12,21 +12,17 @@ using PokemonGameAPI.Domain.Repository;
 
 namespace PokemonGameAPI.Application.Services
 {
-    public class TrainerService : ITrainerService
+    public class TrainerService : GenericService<Trainer, TrainerRequestDto, TrainerResponseDto>, ITrainerService
     {
-        private readonly IRepository<Trainer> _trainerRepository;
-        private readonly IRepository<TrainerPokemon> _trainerPokemonRepository;
-        private readonly IRepository<TrainerPokemonStats> _trainerPokemonStatsRepository;
-        private readonly IRepository<Pokemon> _pokemonRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IGenericRepository<TrainerPokemon> _trainerPokemonRepository;
+        private readonly IGenericRepository<TrainerPokemonStats> _trainerPokemonStatsRepository;
+        private readonly IGenericRepository<Pokemon> _pokemonRepository;
         private readonly PokemonSettings _pokemonSettings;
 
-        public TrainerService(IRepository<Trainer> repository, IUnitOfWork unitOfWork, IMapper mapper, IRepository<TrainerPokemon> trainerPokemonRepository, IRepository<TrainerPokemonStats> trainerPokemonStatsRepository, IRepository<Pokemon> pokemonRepository, IOptions<PokemonSettings> pokemonSettings)
+        public TrainerService(IGenericRepository<Trainer> repository, IUnitOfWork unitOfWork, IMapper mapper, IGenericRepository<TrainerPokemon> trainerPokemonRepository,
+            IGenericRepository<TrainerPokemonStats> trainerPokemonStatsRepository,
+            IGenericRepository<Pokemon> pokemonRepository, IOptions<PokemonSettings> pokemonSettings) : base(repository, unitOfWork, mapper)
         {
-            _trainerRepository = repository;
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
             _trainerPokemonRepository = trainerPokemonRepository;
             _trainerPokemonStatsRepository = trainerPokemonStatsRepository;
             _pokemonRepository = pokemonRepository;
@@ -38,7 +34,7 @@ namespace PokemonGameAPI.Application.Services
             bool pokemonExists = await _pokemonRepository.IsExistsAsync(x => x.Id == model.PokemonId);
             if (!pokemonExists)
                 throw new NotFoundException($"Pokemon with ID {model.PokemonId} not found");
-            var trainer = await _trainerRepository.GetEntityAsync(
+            var trainer = await _repository.GetEntityAsync(
      x => x.Id == model.TrainerId,
      includes: new Func<IQueryable<Trainer>, IQueryable<Trainer>>[]
      {
@@ -65,7 +61,7 @@ namespace PokemonGameAPI.Application.Services
         }
         public async Task ChooseStarterPokemonAsync(AssignPokemonDto model)
         {
-            var trainer = await _trainerRepository.GetEntityAsync(x => x.Id == model.TrainerId);
+            var trainer = await _repository.GetEntityAsync(x => x.Id == model.TrainerId);
             if (trainer == null)
                 throw new NotFoundException($"Trainer with ID {model.TrainerId} not found");
 
@@ -106,80 +102,8 @@ namespace PokemonGameAPI.Application.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<TrainerReturnDto> CreateAsync(TrainerCreateDto model)
-        {
-            var entity = _mapper.Map<Trainer>(model);
-            await _trainerRepository.CreateAsync(entity);
-            await _unitOfWork.SaveChangesAsync();
-            return _mapper.Map<TrainerReturnDto>(entity);
-        }
 
-        public async Task<bool> DeleteAsync(int id)
-        {
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(id), "ID must be greater than zero");
-            }
-            var entity = await _trainerRepository.GetEntityAsync(x => x.Id == id);
-            if (entity == null)
-            {
-                throw new NotFoundException($"Entity with ID {id} not found");
-            }
-            var result = await _trainerRepository.DeleteAsync(entity);
-            await _unitOfWork.SaveChangesAsync();
-
-            return result;
-        }
-
-        public async Task<PagedResponse<TrainerListItemDto>> GetAllAsync(int pageNumber, int pageSize)
-        {
-            int skip = (pageNumber - 1) * pageSize;
-
-            var query = _trainerRepository.GetQuery()
-                .Include(x => x.AppUser)
-                .Include(x => x.TrainerPokemons)
-                .Include(x => x.Tournaments);
-
-
-            int totalCount = await query.CountAsync();
-
-            var entities = await query
-                .Skip(skip)
-                .Take(pageSize)
-                .ToListAsync();
-
-            var data = _mapper.Map<List<TrainerListItemDto>>(entities);
-
-            return new PagedResponse<TrainerListItemDto>
-            {
-                Data = data,
-                TotalCount = totalCount,
-                PageSize = pageSize,
-                CurrentPage = pageNumber
-            };
-        }
-
-        public async Task<TrainerReturnDto> GetByIdAsync(int id)
-        {
-            var entity = await _trainerRepository.GetEntityAsync(
-                predicate: x => x.Id == id,
-                asNoTracking: true,
-                includes: new Func<IQueryable<Trainer>, IQueryable<Trainer>>[]
-                {
-                    query => query.Include(t => t.AppUser)
-                    .Include(t=> t.TrainerPokemons)
-                    .Include(t=> t.Tournaments)
-                    .Include(t=>t.TrainerBadges)
-                }
-                );
-            if (entity == null)
-            {
-                throw new NotFoundException($"Entity with ID {id} not found");
-            }
-            return _mapper.Map<TrainerReturnDto>(entity);
-        }
-
-        public async Task<PagedResponse<TrainerPokemonListItemDto>> GetTrainerPokemonsAsync(int trainerId, int pageSize, int pageNumber)
+        public async Task<PagedResponse<TrainerPokemonResponseDto>> GetTrainerPokemonsAsync(int trainerId, int pageSize, int pageNumber)
         {
             int skip = (pageNumber - 1) * pageSize;
 
@@ -195,31 +119,15 @@ namespace PokemonGameAPI.Application.Services
                 .Take(pageSize)
                 .ToListAsync();
 
-            var data = _mapper.Map<List<TrainerPokemonListItemDto>>(entities);
+            var data = _mapper.Map<List<TrainerPokemonResponseDto>>(entities);
 
-            return new PagedResponse<TrainerPokemonListItemDto>
+            return new PagedResponse<TrainerPokemonResponseDto>
             {
                 Data = data,
                 TotalCount = totalCount,
                 PageSize = pageSize,
                 CurrentPage = pageNumber
             };
-        }
-
-        public async Task<TrainerReturnDto> UpdateAsync(int id, TrainerUpdateDto model)
-        {
-            var existingEntity = await _trainerRepository.GetEntityAsync(x => x.Id == id);
-            if (existingEntity == null)
-            {
-                throw new NotFoundException($"Entity with ID {id} not found");
-            }
-
-            _mapper.Map(model, existingEntity);
-
-            var updatedEntity = await _trainerRepository.UpdateAsync(existingEntity);
-            await _unitOfWork.SaveChangesAsync();
-
-            return _mapper.Map<TrainerReturnDto>(updatedEntity);
         }
 
 

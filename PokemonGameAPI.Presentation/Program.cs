@@ -1,5 +1,4 @@
 using PokemonGameAPI.Application.Extensions;
-using PokemonGameAPI.Contracts.Settings;
 using PokemonGameAPI.Infrastructure.Extensions;
 using PokemonGameAPI.Persistence.Extensions;
 using PokemonGameAPI.Presentation.Extensions;

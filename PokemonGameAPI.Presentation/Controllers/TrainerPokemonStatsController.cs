@@ -28,13 +28,13 @@ namespace PokemonGameAPI.Presentation.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TrainerPokemonStatsCreateDto model)
+        public async Task<IActionResult> Create([FromBody] TrainerPokemonStatsRequestDto model)
         {
             var result = await _trainerPokemonStatsService.CreateAsync(model);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] TrainerPokemonStatsUpdateDto model)
+        public async Task<IActionResult> Update(int id, [FromBody] TrainerPokemonStatsRequestDto model)
         {
             var result = await _trainerPokemonStatsService.UpdateAsync(id, model);
             return Ok(result);

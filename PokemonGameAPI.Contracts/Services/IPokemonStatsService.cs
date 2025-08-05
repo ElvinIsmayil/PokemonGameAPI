@@ -1,14 +1,9 @@
-﻿using PokemonGameAPI.Contracts.DTOs.Pagination;
-using PokemonGameAPI.Contracts.DTOs.PokemonStats;
+﻿using PokemonGameAPI.Contracts.DTOs.PokemonStats;
 
+using PokemonGameAPI.Domain.Entities;
 namespace PokemonGameAPI.Contracts.Services
 {
-    public interface IPokemonStatsService
+    public interface IPokemonStatsService : IGenericService<PokemonStats, PokemonStatsRequestDto, PokemonStatsResponseDto>
     {
-        Task<PagedResponse<PokemonStatsListItemDto>> GetAllAsync(int pageNumber, int pageSize);
-        Task<PokemonStatsReturnDto> GetByIdAsync(int id);
-        Task<PokemonStatsReturnDto> CreateAsync(PokemonStatsCreateDto model);
-        Task<PokemonStatsReturnDto> UpdateAsync(int id, PokemonStatsUpdateDto model);
-        Task<bool> DeleteAsync(int id);
     }
 }

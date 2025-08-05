@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using PokemonGameAPI.Application.Profiles;
 using PokemonGameAPI.Application.Services;
 using PokemonGameAPI.Contracts.Services;
-using PokemonGameAPI.Contracts.Settings;
 
 namespace PokemonGameAPI.Application.Extensions
 {
@@ -18,9 +17,11 @@ namespace PokemonGameAPI.Application.Extensions
                 opt.AddProfile(new MapperProfile());
             });
 
+
             // Register services
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IBadgeService, BadgeService>();
+            services.AddScoped<IBattlePokemonService, BattlePokemonService>();
             services.AddScoped<IBattleService, BattleService>();
             services.AddScoped<IGymService, GymService>();
             services.AddScoped<IPokemonService, PokemonService>();

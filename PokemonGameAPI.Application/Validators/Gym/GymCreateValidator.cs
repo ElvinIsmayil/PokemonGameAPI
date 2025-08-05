@@ -3,7 +3,7 @@ using PokemonGameAPI.Contracts.DTOs.Gym;
 
 namespace PokemonGameAPI.Application.Validators.GymValidator
 {
-    public class GymCreateValidator : AbstractValidator<GymCreateDto>
+    public class GymCreateValidator : AbstractValidator<GymRequestDto>
     {
         public GymCreateValidator()
         {

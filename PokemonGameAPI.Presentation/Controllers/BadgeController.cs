@@ -33,13 +33,13 @@ namespace PokemonGameAPI.Presentation.Controllers
             return Ok(badge);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BadgeCreateDto model)
+        public async Task<IActionResult> Create([FromBody] BadgeRequestDto model)
         {
             var createdBadge = await _badgeService.CreateAsync(model);
             return CreatedAtAction(nameof(GetById), new { id = createdBadge.Id }, createdBadge);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] BadgeUpdateDto model)
+        public async Task<IActionResult> Update(int id, [FromForm] BadgeRequestDto model)
         {
             var updatedBadge = await _badgeService.UpdateAsync(id, model);
             if (updatedBadge == null)
