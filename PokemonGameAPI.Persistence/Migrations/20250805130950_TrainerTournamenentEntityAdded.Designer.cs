@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokemonGameAPI.Persistence.Data;
 
@@ -11,9 +12,11 @@ using PokemonGameAPI.Persistence.Data;
 namespace PokemonGameAPI.Persistence.Migrations
 {
     [DbContext(typeof(PokemonGameDbContext))]
-    partial class PokemonGameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250805130950_TrainerTournamenentEntityAdded")]
+    partial class TrainerTournamenentEntityAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

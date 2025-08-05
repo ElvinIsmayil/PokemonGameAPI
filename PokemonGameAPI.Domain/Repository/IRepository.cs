@@ -10,7 +10,6 @@ namespace PokemonGameAPI.Domain.Repository
             bool asNoTracking = false,
             bool asSplitQuery = false,
             int skip = 0,
-            int take = 0,
             bool isIgnoredDeleteBehaviour = false,
             params Func<IQueryable<TEntity>, IQueryable<TEntity>>[]? includes);
 

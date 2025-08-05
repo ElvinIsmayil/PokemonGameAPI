@@ -17,9 +17,6 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-builder.Services.Configure<JwtSettings>(
-    config.GetSection("Jwt"));
-
 builder.Services.RegisterDataAccessServices(config);
 builder.Services.RegisterApplicationServices(config);
 builder.Services.RegisterAPIServices(config);
@@ -38,6 +35,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+app.UseAuthentication();
 app.MapControllers();
 
 try

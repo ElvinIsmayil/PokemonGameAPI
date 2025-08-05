@@ -12,6 +12,7 @@ namespace PokemonGameAPI.Persistence.Extensions
     {
         public static IServiceCollection RegisterDataAccessServices(this IServiceCollection services, IConfiguration configuration)
         {
+            // Register DbContext with SQL Server and migrations assembly
             services.AddDbContext<PokemonGameDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("Default"),
@@ -19,8 +20,10 @@ namespace PokemonGameAPI.Persistence.Extensions
                     .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
             });
 
+            // Register repositories and unit of work
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             return services;
         }
     }

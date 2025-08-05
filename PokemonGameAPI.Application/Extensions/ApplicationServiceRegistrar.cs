@@ -12,11 +12,13 @@ namespace PokemonGameAPI.Application.Extensions
     {
         public static IServiceCollection RegisterApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
+            // Register AutoMapper with the MapperProfile
             services.AddAutoMapper(opt =>
             {
                 opt.AddProfile(new MapperProfile());
             });
 
+            // Register services
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IBadgeService, BadgeService>();
             services.AddScoped<IBattleService, BattleService>();
@@ -32,10 +34,9 @@ namespace PokemonGameAPI.Application.Extensions
             services.AddScoped<ITrainerPokemonStatsService, TrainerPokemonStatsService>();
             services.AddScoped<IUserService, UserService>();
 
+            // Register FluentValidation
             services.AddFluentValidationAutoValidation();
             services.AddFluentValidationClientsideAdapters();
-            services.Configure<PokemonSettings>(configuration.GetSection("PokemonSettings"));
-
 
             return services;
         }

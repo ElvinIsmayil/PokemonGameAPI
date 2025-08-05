@@ -15,8 +15,8 @@ namespace PokemonGameAPI.Persistence.Configurations
                 .HasMaxLength(150);
 
             builder.Property(t => t.Description)
-                .HasMaxLength(500)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(500);
 
             builder.Property(t => t.StartDate)
                 .IsRequired();
@@ -24,24 +24,11 @@ namespace PokemonGameAPI.Persistence.Configurations
             builder.Property(t => t.EndDate)
                 .IsRequired();
 
-            // Many-to-many: Tournament <-> Trainers (Participants)
-            builder.HasMany(t => t.Participants)
-                .WithMany(tr => tr.Tournaments)
-                .UsingEntity<Dictionary<string, object>>(
-                    "TournamentParticipant",
-                    j => j.HasOne<Trainer>()
-                          .WithMany()
-                          .HasForeignKey("TrainerId")
-                          .OnDelete(DeleteBehavior.Cascade),
-                    j => j.HasOne<Tournament>()
-                          .WithMany()
-                          .HasForeignKey("TournamentId")
-                          .OnDelete(DeleteBehavior.Cascade),
-                    j =>
-                    {
-                        j.HasKey("TournamentId", "TrainerId");
-                        j.ToTable("TournamentParticipants");
-                    });
+            // One-to-many Tournament -> TrainerTournaments (join entity)
+            builder.HasMany(t => t.TrainerTournaments)
+                .WithOne(tt => tt.Tournament)
+                .HasForeignKey(tt => tt.TournamentId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
             // Winner relation (optional)
@@ -49,8 +36,6 @@ namespace PokemonGameAPI.Persistence.Configurations
                 .WithMany()
                 .HasForeignKey(t => t.WinnerId)
                 .OnDelete(DeleteBehavior.SetNull);
-
-
         }
     }
 }

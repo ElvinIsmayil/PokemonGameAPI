@@ -19,42 +19,22 @@ namespace PokemonGameAPI.Persistence.Repository
 
         public async Task<TEntity> CreateAsync(TEntity entity)
         {
-            try
-            {
-                await _table.AddAsync(entity);
-                return entity;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error creating entity: " + ex.Message, ex);
-            }
+            await _table.AddAsync(entity);
+            return entity;
         }
 
-        public async Task<TEntity> UpdateAsync(TEntity entity)
+        public Task<TEntity> UpdateAsync(TEntity entity)
         {
-            try
-            {
-                _table.Update(entity);
-                return entity;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error updating entity: " + ex.Message, ex);
-            }
+            entity.UpdatedAt = DateTime.UtcNow;
+            _table.Update(entity);
+            return Task.FromResult(entity);
         }
 
-        public async Task<bool> DeleteAsync(TEntity entity)
+        public Task<bool> DeleteAsync(TEntity entity)
         {
-            try
-            {
-                entity.IsDeleted = true;
-                _table.Update(entity);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error deleting entity: " + ex.Message, ex);
-            }
+            entity.IsDeleted = true;
+            _table.Update(entity);
+            return Task.FromResult(true);
         }
 
         public async Task<List<TEntity>> GetAllAsync(
@@ -66,40 +46,15 @@ namespace PokemonGameAPI.Persistence.Repository
             bool isIgnoredDeleteBehaviour = false,
             params Func<IQueryable<TEntity>, IQueryable<TEntity>>[]? includes)
         {
-            try
-            {
-                IQueryable<TEntity> query = _table;
+            var query = BuildQuery(predicate, asNoTracking, asSplitQuery, isIgnoredDeleteBehaviour, includes);
 
-                if (includes is { Length: > 0 })
-                {
-                    foreach (var include in includes)
-                        query = include(query);
-                }
+            if (skip > 0)
+                query = query.Skip(skip);
 
-                if (predicate != null)
-                    query = query.Where(predicate);
+            if (take > 0)
+                query = query.Take(take);
 
-                if (skip > 0)
-                    query = query.Skip(skip);
-
-                if (take > 0)
-                    query = query.Take(take);
-
-                if (asNoTracking)
-                    query = query.AsNoTracking();
-
-                if (asSplitQuery)
-                    query = query.AsSplitQuery();
-
-                if (isIgnoredDeleteBehaviour)
-                    query = query.IgnoreQueryFilters();
-
-                return await query.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error in GetAllAsync: " + ex.Message, ex);
-            }
+            return await query.ToListAsync();
         }
 
         public async Task<TEntity?> GetEntityAsync(
@@ -107,44 +62,15 @@ namespace PokemonGameAPI.Persistence.Repository
             bool asNoTracking = false,
             bool asSplitQuery = false,
             int skip = 0,
-            int take = 0,
             bool isIgnoredDeleteBehaviour = false,
             params Func<IQueryable<TEntity>, IQueryable<TEntity>>[]? includes)
         {
-            try
-            {
-                IQueryable<TEntity> query = _table;
+            var query = BuildQuery(predicate, asNoTracking, asSplitQuery, isIgnoredDeleteBehaviour, includes);
 
-                if (includes is { Length: > 0 })
-                {
-                    foreach (var include in includes)
-                        query = include(query);
-                }
+            if (skip > 0)
+                query = query.Skip(skip);
 
-                if (predicate != null)
-                    query = query.Where(predicate);
-
-                if (skip > 0)
-                    query = query.Skip(skip);
-
-                if (take > 0)
-                    query = query.Take(take);
-
-                if (asNoTracking)
-                    query = query.AsNoTracking();
-
-                if (asSplitQuery)
-                    query = query.AsSplitQuery();
-
-                if (isIgnoredDeleteBehaviour)
-                    query = query.IgnoreQueryFilters();
-
-                return await query.FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error in GetEntityAsync: " + ex.Message, ex);
-            }
+            return await query.FirstOrDefaultAsync();
         }
 
         public IQueryable<TEntity> GetQuery(
@@ -154,34 +80,7 @@ namespace PokemonGameAPI.Persistence.Repository
             bool isIgnoredDeleteBehaviour = false,
             params Func<IQueryable<TEntity>, IQueryable<TEntity>>[]? includes)
         {
-            try
-            {
-                IQueryable<TEntity> query = _table;
-
-                if (includes is { Length: > 0 })
-                {
-                    foreach (var include in includes)
-                        query = include(query);
-                }
-
-                if (predicate != null)
-                    query = query.Where(predicate);
-
-                if (asNoTracking)
-                    query = query.AsNoTracking();
-
-                if (asSplitQuery)
-                    query = query.AsSplitQuery();
-
-                if (isIgnoredDeleteBehaviour)
-                    query = query.IgnoreQueryFilters();
-
-                return query;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error in GetQuery for type {typeof(TEntity).Name}: {ex.Message}", ex);
-            }
+            return BuildQuery(predicate, asNoTracking, asSplitQuery, isIgnoredDeleteBehaviour, includes);
         }
 
         public async Task<bool> IsExistsAsync(
@@ -189,22 +88,41 @@ namespace PokemonGameAPI.Persistence.Repository
             bool asNoTracking = false,
             bool isIgnoredDeleteBehaviour = false)
         {
-            try
+            if (predicate == null)
+                return false;
+
+            var query = BuildQuery(predicate, asNoTracking, false, isIgnoredDeleteBehaviour);
+            return await query.AnyAsync();
+        }
+
+        private IQueryable<TEntity> BuildQuery(
+            Expression<Func<TEntity, bool>>? predicate,
+            bool asNoTracking,
+            bool asSplitQuery,
+            bool isIgnoredDeleteBehaviour,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>[]? includes = null)
+        {
+            IQueryable<TEntity> query = _table;
+
+            if (isIgnoredDeleteBehaviour)
+                query = query.IgnoreQueryFilters();
+
+            if (asNoTracking)
+                query = query.AsNoTracking();
+
+            if (asSplitQuery)
+                query = query.AsSplitQuery();
+
+            if (includes is { Length: > 0 })
             {
-                IQueryable<TEntity> query = _table;
-
-                if (asNoTracking)
-                    query = query.AsNoTracking();
-
-                if (isIgnoredDeleteBehaviour)
-                    query = query.IgnoreQueryFilters();
-
-                return predicate != null && await query.AnyAsync(predicate);
+                foreach (var include in includes)
+                    query = include(query);
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Error in IsExistsAsync: " + ex.Message, ex);
-            }
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            return query;
         }
     }
 }

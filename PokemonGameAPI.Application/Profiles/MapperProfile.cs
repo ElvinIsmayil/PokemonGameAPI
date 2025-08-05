@@ -107,7 +107,7 @@ namespace PokemonGameAPI.Application.Profiles
             CreateMap<Tournament, TournamentReturnDto>()
                 .ForMember(dest => dest.WinnerName, opt => opt.MapFrom(src => src.Winner != null ? src.Winner.Name : string.Empty));
             CreateMap<Tournament, TournamentListItemDto>()
-                .ForMember(dest => dest.ParticipantCount, opt => opt.MapFrom(src => src.Participants.Count))
+                .ForMember(dest => dest.ParticipantCount, opt => opt.MapFrom(src => src.TrainerTournaments.Count))
                 .ForMember(dest => dest.BattleCount, opt => opt.MapFrom(src => src.Battles.Count));
             CreateMap<TournamentCreateDto, Tournament>().ReverseMap();
             CreateMap<TournamentUpdateDto, Tournament>()

@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using PokemonGameAPI.Contracts.Settings;
 using PokemonGameAPI.Presentation.ExceptionHandlers;
 using Serilog;
 
@@ -8,6 +9,7 @@ namespace PokemonGameAPI.Presentation.Extensions
     {
         public static IServiceCollection RegisterAPIServices(this IServiceCollection services, IConfiguration configuration)
         {
+            // Cors Configuration
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
@@ -19,6 +21,7 @@ namespace PokemonGameAPI.Presentation.Extensions
                 });
             });
 
+            // Swagger Jwt Token Authorization Configuration
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -48,14 +51,20 @@ namespace PokemonGameAPI.Presentation.Extensions
             });
             });
 
+            // Exception Handlers
             services.AddExceptionHandler<NotFoundExceptionHandler>();
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddExceptionHandler<ValidationExceptionHandler>();
             services.AddExceptionHandler<UnauthorizedExceptionHandler>();
             services.AddProblemDetails();
 
-            // Optional: You can register Serilog enrichers for DI
+            //Logger registration
             services.AddSingleton(Log.Logger);
+
+            // Configuration Settings
+            services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
+            services.Configure<PokemonSettings>(configuration.GetSection("PokemonSettings"));
+
 
             return services;
         }

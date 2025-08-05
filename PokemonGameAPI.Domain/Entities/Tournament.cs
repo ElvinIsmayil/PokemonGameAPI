@@ -10,7 +10,7 @@ namespace PokemonGameAPI.Domain.Entities
         public DateTime EndDate { get; set; }
 
 
-        public ICollection<Trainer> Participants { get; set; } = new List<Trainer>();
+        public ICollection<TrainerTournament> TrainerTournaments { get; set; } = new List<TrainerTournament>();
         public ICollection<Battle> Battles { get; set; } = new List<Battle>();
 
         public int? WinnerId { get; set; }

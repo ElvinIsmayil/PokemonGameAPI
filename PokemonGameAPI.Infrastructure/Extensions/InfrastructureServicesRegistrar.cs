@@ -16,9 +16,11 @@ namespace PokemonGameAPI.Infrastructure.Extensions
     {
         public static IServiceCollection RegisterInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            // Infrastructure services registration
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<ITokenService, TokenService>();
 
+            // Identity registration
             services.AddIdentity<AppUser, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 8;
@@ -32,10 +34,6 @@ namespace PokemonGameAPI.Infrastructure.Extensions
                 options.User.RequireUniqueEmail = true;
             }).AddDefaultTokenProviders().AddEntityFrameworkStores<PokemonGameDbContext>();
 
-            // Bind JwtSettings first
-            services.Configure<JwtSettings>(
-            configuration.GetSection("Jwt"));
-
             // Read JwtSettings values immediately for use in JWT authentication setup
             var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>();
 
@@ -44,6 +42,7 @@ namespace PokemonGameAPI.Infrastructure.Extensions
                 throw new Exception("JWT SecretKey is missing or empty in configuration.");
             }
 
+            // JWT authentication setup
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
