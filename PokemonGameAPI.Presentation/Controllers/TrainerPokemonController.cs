@@ -62,6 +62,23 @@ namespace PokemonGameAPI.Presentation.Controllers
             return NoContent();
         }
 
+        [HttpPost("{id}/levelup")]
+        public async Task<IActionResult> LevelUp(LevelUpDto model)
+        {
+            await _trainerPokemonService.LevelUpAsync(model);
+            return Ok();
+        }
 
+        // Uncomment and implement when ready
+        // [HttpPost("{id}/evolve")]
+        // public async Task<IActionResult> Evolve(int id)
+        // {
+        //     var evolved = await _trainerPokemonService.EvolveAsync(id);
+        //     if (evolved == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //     return Ok(evolved);
+        // }
     }
 }

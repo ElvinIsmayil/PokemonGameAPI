@@ -21,6 +21,7 @@ namespace PokemonGameAPI.Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         public async Task<TrainerPokemonReturnDto> CreateAsync(TrainerPokemonCreateDto model)
         {
             var entity = _mapper.Map<TrainerPokemon>(model);
@@ -50,7 +51,8 @@ namespace PokemonGameAPI.Application.Services
         {
             int skip = (pageNumber - 1) * pageSize;
 
-            var query = _repository.GetQuery().Include(x => x.Trainer)
+            var query = _repository.GetQuery()
+                .Include(x => x.Trainer)
                 .Include(x => x.Pokemon);
 
             int totalCount = await query.CountAsync();
@@ -79,10 +81,10 @@ namespace PokemonGameAPI.Application.Services
                  includes: new Func<IQueryable<TrainerPokemon>, IQueryable<TrainerPokemon>>[]
                  {
                     query => query.Include(t => t.Trainer)
-                    .Include(t=>t.Pokemon)
-                    .Include(t=>t.TrainerPokemonStats)
+                                  .Include(t => t.Pokemon)
+                                  .Include(t => t.TrainerPokemonStats)
                  }
-                 );
+             );
             if (entity == null)
             {
                 throw new NotFoundException($"Entity with ID {id} not found");
@@ -104,6 +106,85 @@ namespace PokemonGameAPI.Application.Services
             await _unitOfWork.SaveChangesAsync();
 
             return _mapper.Map<TrainerPokemonReturnDto>(updatedEntity);
+        }
+
+        public async Task LevelUpAsync(LevelUpDto model)
+        {
+            var entity = await _repository.GetEntityAsync(
+                x => x.Id == model.TrainerPokemonId,
+                includes: new Func<IQueryable<TrainerPokemon>, IQueryable<TrainerPokemon>>[]
+                {
+                    q => q.Include(tp => tp.TrainerPokemonStats)
+                });
+
+            if (entity == null)
+                throw new NotFoundException($"TrainerPokemon with ID {model.TrainerPokemonId} not found.");
+
+            var stats = entity.TrainerPokemonStats;
+            stats.ExperiencePoints += model.NewExperiencePoints;
+
+            while (stats.ExperiencePoints >= 100)
+            {
+                stats.Level++;
+                stats.ExperiencePoints -= 100;
+
+                stats.MaxHealthPoints += 10;
+                stats.HealthPoints = stats.MaxHealthPoints; // Heal on level up
+                stats.AttackPoints += 2;
+                stats.DefensePoints += 2;
+                stats.AvailableSkillPoints += 1;
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task EvolveAsync(int trainerPokemonId)
+        {
+            var entity = await _repository.GetEntityAsync(
+                x => x.Id == trainerPokemonId,
+                includes: new Func<IQueryable<TrainerPokemon>, IQueryable<TrainerPokemon>>[]
+                {
+                    q => q.Include(tp => tp.Pokemon)
+                          .ThenInclude(p => p.PokemonCategoryId) // if needed for evolution data
+                });
+
+            if (entity == null)
+                throw new NotFoundException($"TrainerPokemon with ID {trainerPokemonId} not found.");
+
+            var currentPokemon = entity.Pokemon;
+
+            if (entity.TrainerPokemonStats.Level >= 16)
+            {
+                var evolvedPokemon = await FindEvolvedPokemonAsync(currentPokemon.Id);
+
+                if (evolvedPokemon != null)
+                {
+                    entity.PokemonId = evolvedPokemon.Id;
+                    entity.Pokemon = evolvedPokemon;
+
+                    entity.TrainerPokemonStats.Level = 1;
+                    entity.TrainerPokemonStats.ExperiencePoints = 0;
+                    entity.TrainerPokemonStats.HealthPoints = evolvedPokemon.BaseStats.MaxHealthPoints;
+                    entity.TrainerPokemonStats.MaxHealthPoints = evolvedPokemon.BaseStats.MaxHealthPoints;
+                    entity.TrainerPokemonStats.AttackPoints = evolvedPokemon.BaseStats.AttackPoints;
+                    entity.TrainerPokemonStats.DefensePoints = evolvedPokemon.BaseStats.DefensePoints;
+                    entity.TrainerPokemonStats.AvailableSkillPoints = 0;
+
+                    await _unitOfWork.SaveChangesAsync();
+                }
+            }
+        }
+
+        private async Task<Pokemon?> FindEvolvedPokemonAsync(int currentPokemonId)
+        {
+            return null;
+        }
+
+        public async Task<TrainerPokemonReturnDto> GainExperienceAsync(LevelUpDto model)
+        {
+            await LevelUpAsync(model);
+            await EvolveAsync(model.TrainerPokemonId);
+            return await GetByIdAsync(model.TrainerPokemonId);
         }
     }
 }

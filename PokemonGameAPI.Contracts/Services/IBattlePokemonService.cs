@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PokemonGameAPI.Contracts.DTOs.BattlePokemon;
+using PokemonGameAPI.Contracts.DTOs.Pagination;
 
 namespace PokemonGameAPI.Contracts.Services
 {
-    internal class IBattlePokemonService
+    public interface IBattlePokemonService
     {
+        Task<PagedResponse<BattlePokemonListItemDto>> GetAllAsync(int pageNumber, int pageSize);
+        Task<BattlePokemonReturnDto> GetByIdAsync(int id);
+        Task<BattlePokemonReturnDto> CreateAsync(BattlePokemonCreateDto model);
+        Task<BattlePokemonReturnDto> UpdateAsync(int id, BattlePokemonUpdateDto model);
+        Task<bool> DeleteAsync(int id);
     }
 }

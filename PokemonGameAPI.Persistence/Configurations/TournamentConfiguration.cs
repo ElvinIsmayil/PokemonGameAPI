@@ -24,11 +24,6 @@ namespace PokemonGameAPI.Persistence.Configurations
             builder.Property(t => t.EndDate)
                 .IsRequired();
 
-            builder.HasOne(t => t.Location)
-    .WithMany(l => l.Tournaments)
-    .HasForeignKey(t => t.LocationId)
-    .OnDelete(DeleteBehavior.Cascade);
-
             // Many-to-many: Tournament <-> Trainers (Participants)
             builder.HasMany(t => t.Participants)
                 .WithMany(tr => tr.Tournaments)

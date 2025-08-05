@@ -10,5 +10,8 @@ namespace PokemonGameAPI.Contracts.Services
         Task<PokemonAbilityReturnDto> CreateAsync(PokemonAbilityCreateDto model);
         Task<PokemonAbilityReturnDto> UpdateAsync(int id, PokemonAbilityUpdateDto model);
         Task<bool> DeleteAsync(int id);
+
+        Task<List<PokemonAbilityListItemDto>> GetAllAbilitiesByPokemonIdAsync(int pokemonId);
+        Task<PokemonAbilityReturnDto> AssignPokemonAbility(PokemonAbilityAssignDto model);
     }
 }

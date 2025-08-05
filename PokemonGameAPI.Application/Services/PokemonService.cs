@@ -16,7 +16,6 @@ namespace PokemonGameAPI.Application.Services
     {
         private readonly IRepository<Pokemon> _repository;
         private readonly IRepository<PokemonStats> _pokemonStatsRepository;
-        private readonly IRepository<Location> _locationRepository;
         private readonly IRepository<PokemonCategory> _pokemonCategoryRepository;
         private readonly IRepository<PokemonAbility> _pokemonAbilityRepository;
         private readonly IImageService _imageService;
@@ -26,7 +25,7 @@ namespace PokemonGameAPI.Application.Services
         private readonly PokemonSettings _pokemonSettings;
 
 
-        public PokemonService(IRepository<Pokemon> repository, IUnitOfWork unitOfWork, IMapper mapper, IImageService imageService, IRepository<PokemonStats> pokemonStatsRepository, IRepository<PokemonCategory> pokemonCategoryRepository, IRepository<Location> locationRepository, IRepository<PokemonAbility> pokemonAbilityRepository, IOptions<PokemonSettings> pokemonSettings)
+        public PokemonService(IRepository<Pokemon> repository, IUnitOfWork unitOfWork, IMapper mapper, IImageService imageService, IRepository<PokemonStats> pokemonStatsRepository, IRepository<PokemonCategory> pokemonCategoryRepository, IRepository<PokemonAbility> pokemonAbilityRepository, IOptions<PokemonSettings> pokemonSettings)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
@@ -34,7 +33,6 @@ namespace PokemonGameAPI.Application.Services
             _imageService = imageService;
             _pokemonStatsRepository = pokemonStatsRepository;
             _pokemonCategoryRepository = pokemonCategoryRepository;
-            _locationRepository = locationRepository;
             _pokemonAbilityRepository = pokemonAbilityRepository;
             _pokemonSettings = pokemonSettings.Value;
         }
@@ -44,10 +42,6 @@ namespace PokemonGameAPI.Application.Services
             var pokemonExists = await _repository.IsExistsAsync(x => x.Name == model.Name);
             if (pokemonExists)
                 throw new InvalidOperationException($"Pokemon with the name '{model.Name}' already exists.");
-
-            var locationExists = await _locationRepository.IsExistsAsync(x => x.Id == model.LocationId);
-            if (!locationExists)
-                throw new NotFoundException($"Location with ID {model.LocationId} not found.");
 
             var pokemonCategoryExists = await _pokemonCategoryRepository.IsExistsAsync(x => x.Id == model.PokemonCategoryId);
             if (!pokemonCategoryExists)
@@ -96,8 +90,7 @@ namespace PokemonGameAPI.Application.Services
             int skip = (pageNumber - 1) * pageSize;
 
             var query = _repository.GetQuery().Include(x => x.BaseStats)
-                .Include(x => x.Category)
-                .Include(x => x.Location);
+                .Include(x => x.Category);
 
             int totalCount = await query.CountAsync();
 
@@ -126,7 +119,6 @@ namespace PokemonGameAPI.Application.Services
                 {
                     query => query
                     .Include(t => t.Category)
-                    .Include(t => t.Location)
                     .Include(t => t.BaseStats)
                     .Include(t => t.Abilities)
                     .Include(t => t.TrainerPokemons)

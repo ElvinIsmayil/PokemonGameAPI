@@ -9,8 +9,6 @@ namespace PokemonGameAPI.Domain.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
-        public int LocationId { get; set; }
-        public Location Location { get; set; } = default!;
 
         public ICollection<Trainer> Participants { get; set; } = new List<Trainer>();
         public ICollection<Battle> Battles { get; set; } = new List<Battle>();

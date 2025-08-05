@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PokemonGameAPI.Contracts.DTOs.BattlePokemon
+﻿namespace PokemonGameAPI.Contracts.DTOs.BattlePokemon
 {
     public record BattlePokemonReturnDto
     {
+        public int Id { get; set; }
         public string BattleName { get; set; } = default!;
         public int TrainerPokemonName { get; set; } = default!;
         public int CurrentHP { get; set; }

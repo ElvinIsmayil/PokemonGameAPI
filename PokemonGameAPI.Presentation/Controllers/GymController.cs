@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PokemonGameAPI.Contracts.DTOs.Badge;
 using PokemonGameAPI.Contracts.DTOs.Gym;
 using PokemonGameAPI.Contracts.Services;
 
@@ -58,6 +59,18 @@ namespace PokemonGameAPI.Presentation.Controllers
             }
             return NoContent();
         }
+
+        [HttpPost("award-badge")]
+        public async Task<IActionResult> AwardBadge([FromBody] AwardBadgeDto model)
+        {
+            var result = await _gymService.AwardBadgeAsync(model);
+            if (result is null)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+
 
 
     }

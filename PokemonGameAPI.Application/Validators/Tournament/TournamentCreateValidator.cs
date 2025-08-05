@@ -23,8 +23,6 @@ namespace PokemonGameAPI.Application.Validators.Tournament
                 .GreaterThan(x => x.StartDate)
                 .WithMessage("EndDate must be after StartDate.");
 
-            RuleFor(x => x.LocationId)
-                .GreaterThan(0).WithMessage("LocationId must be greater than 0.");
         }
     }
 }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PokemonGameAPI.Domain.Entities.Common;
 
 namespace PokemonGameAPI.Domain.Entities
 {
-    public class TrainerBadge
+    public class TrainerBadge : BaseEntity
     {
         public int TrainerId { get; set; }
         public Trainer Trainer { get; set; } = default!;

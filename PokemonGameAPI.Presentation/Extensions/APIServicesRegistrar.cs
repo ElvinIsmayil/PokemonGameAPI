@@ -1,5 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 using PokemonGameAPI.Presentation.ExceptionHandlers;
+using Serilog;
 
 namespace PokemonGameAPI.Presentation.Extensions
 {
@@ -17,6 +18,7 @@ namespace PokemonGameAPI.Presentation.Extensions
                         .AllowAnyHeader();
                 });
             });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -35,15 +37,15 @@ namespace PokemonGameAPI.Presentation.Extensions
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement {
                  {
-                new OpenApiSecurityScheme {
-                    Reference = new OpenApiReference {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    new OpenApiSecurityScheme {
+                        Reference = new OpenApiReference {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
                 }
-            },
-            new string[] {}
-        }
-    });
+            });
             });
 
             services.AddExceptionHandler<NotFoundExceptionHandler>();
@@ -51,6 +53,10 @@ namespace PokemonGameAPI.Presentation.Extensions
             services.AddExceptionHandler<ValidationExceptionHandler>();
             services.AddExceptionHandler<UnauthorizedExceptionHandler>();
             services.AddProblemDetails();
+
+            // Optional: You can register Serilog enrichers for DI
+            services.AddSingleton(Log.Logger);
+
             return services;
         }
     }

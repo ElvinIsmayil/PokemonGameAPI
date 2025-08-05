@@ -21,6 +21,7 @@ namespace PokemonGameAPI.Presentation.Controllers
             var battles = await _battleService.GetAllAsync(pageNumber, pageSize);
             return Ok(battles);
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -31,12 +32,14 @@ namespace PokemonGameAPI.Presentation.Controllers
             }
             return Ok(battle);
         }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] BattleCreateDto model)
         {
             var createdBattle = await _battleService.CreateAsync(model);
             return CreatedAtAction(nameof(GetById), new { id = createdBattle.Id }, createdBattle);
         }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] BattleUpdateDto model)
         {
@@ -47,6 +50,7 @@ namespace PokemonGameAPI.Presentation.Controllers
             }
             return Ok(updatedBattle);
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -56,6 +60,78 @@ namespace PokemonGameAPI.Presentation.Controllers
                 return NotFound();
             }
             return NoContent();
+        }
+
+        // New: Start a battle by id
+        [HttpPost("{id}/start")]
+        public async Task<IActionResult> StartBattle(int id)
+        {
+            try
+            {
+                var battle = await _battleService.StartBattleAsync(id);
+                return Ok(battle);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // New: Finish a battle by id
+        [HttpPost("{id}/finish")]
+        public async Task<IActionResult> FinishBattle(int id)
+        {
+            try
+            {
+                var battle = await _battleService.FinishBattleAsync(id);
+                return Ok(battle);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // New: Execute a turn in a battle
+        [HttpPost("execute-turn")]
+        public async Task<IActionResult> ExecuteTurn([FromBody] BattleTurnDto turn)
+        {
+            try
+            {
+                var result = await _battleService.ExecuteTurnAsync(turn);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // New: Get battle result by id
+        [HttpGet("{id}/result")]
+        public async Task<IActionResult> GetBattleResult(int id)
+        {
+            try
+            {
+                var result = await _battleService.GetBattleResultAsync(id);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

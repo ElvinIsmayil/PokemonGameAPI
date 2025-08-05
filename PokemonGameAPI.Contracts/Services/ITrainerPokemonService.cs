@@ -10,5 +10,9 @@ namespace PokemonGameAPI.Contracts.Services
         Task<TrainerPokemonReturnDto> CreateAsync(TrainerPokemonCreateDto model);
         Task<TrainerPokemonReturnDto> UpdateAsync(int id, TrainerPokemonUpdateDto model);
         Task<bool> DeleteAsync(int id);
+
+        Task LevelUpAsync(LevelUpDto model);
+        Task EvolveAsync(int trainerPokemonId);
+        Task<TrainerPokemonReturnDto> GainExperienceAsync(LevelUpDto model);
     }
 }

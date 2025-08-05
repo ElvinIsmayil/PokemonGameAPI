@@ -28,15 +28,12 @@ namespace PokemonGameAPI.Persistence.Configurations
                    .HasForeignKey(b => b.Trainer2Id)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            // Many-to-many for Trainer1Pokemons participating in the battle
-            builder.HasMany(b => b.Trainer1BattlePokemons)
-                   .WithMany()
-                   .UsingEntity(j => j.ToTable("Trainer1BattlePokemons"));
+            // One-to-many relationship with BattlePokemons
+            builder.HasMany(b => b.BattlePokemons)
+                   .WithOne(bp => bp.Battle)
+                   .HasForeignKey(bp => bp.BattleId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
-            // Many-to-many for Trainer2Pokemons participating in the battle
-            builder.HasMany(b => b.Trainer2BattlePokemons)
-                   .WithMany()
-                   .UsingEntity(j => j.ToTable("Trainer2BattlePokemons"));
         }
     }
 }

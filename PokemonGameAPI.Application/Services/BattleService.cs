@@ -11,61 +11,107 @@ namespace PokemonGameAPI.Application.Services
 {
     public class BattleService : IBattleService
     {
-        private readonly IRepository<Battle> _repository;
+        private readonly IRepository<Battle> _battleRepository;
         private readonly IRepository<TrainerPokemon> _trainerPokemonRepository;
+        private readonly IRepository<PokemonAbility> _abilityRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public BattleService(IRepository<Battle> repository, IUnitOfWork unitOfWork, IMapper mapper, IRepository<TrainerPokemon> trainerPokemonRepository)
+        public BattleService(
+            IRepository<Battle> battleRepository,
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IRepository<TrainerPokemon> trainerPokemonRepository,
+            IRepository<PokemonAbility> abilityRepository)
         {
-            _repository = repository;
+            _battleRepository = battleRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _trainerPokemonRepository = trainerPokemonRepository;
+            _abilityRepository = abilityRepository;
         }
+
         public async Task<BattleReturnDto> CreateAsync(BattleCreateDto model)
         {
-            var entity = _mapper.Map<Battle>(model);
-            entity.Trainer1BattlePokemons = await _trainerPokemonRepository.GetAllAsync(tp => model.Trainer1BattlePokemons.Contains(tp.Id) && model.Trainer1Id == tp.TrainerId);
-            entity.Trainer2BattlePokemons = await _trainerPokemonRepository.GetAllAsync(tp => model.Trainer2BattlePokemons.Contains(tp.Id) && model.Trainer2Id == tp.TrainerId);
+            var battle = _mapper.Map<Battle>(model);
+            battle.StartTime = default;
+            battle.EndTime = default;
 
-            await _repository.CreateAsync(entity);
+            await _battleRepository.CreateAsync(battle);
             await _unitOfWork.SaveChangesAsync();
-            return _mapper.Map<BattleReturnDto>(entity);
+
+            return _mapper.Map<BattleReturnDto>(battle);
         }
+
+        public async Task<BattleReturnDto> GetBattleResultAsync(int battleId)
+        {
+            var battle = await _battleRepository.GetEntityAsync(
+                predicate: b => b.Id == battleId,
+                asNoTracking: true,
+                includes: new Func<IQueryable<Battle>, IQueryable<Battle>>[]
+                {
+            q => q.Include(b => b.Trainer1),
+            q => q.Include(b => b.Trainer2),
+            q => q.Include(b => b.Winner),
+            q => q.Include(b => b.BattlePokemons)
+                    .ThenInclude(bp => bp.TrainerPokemon)
+                    .ThenInclude(tp => tp.Pokemon),
+            q => q.Include(b => b.BattlePokemons)
+                    .ThenInclude(bp => bp.TrainerPokemon)
+                    .ThenInclude(tp => tp.TrainerPokemonStats)
+                });
+
+            if (battle == null)
+                throw new NotFoundException($"Battle with id {battleId} not found.");
+
+            return _mapper.Map<BattleReturnDto>(battle);
+        }
+
 
         public async Task<bool> DeleteAsync(int id)
         {
             if (id <= 0)
-            {
                 throw new ArgumentOutOfRangeException(nameof(id), "ID must be greater than zero");
-            }
-            var entity = await _repository.GetEntityAsync(x => x.Id == id);
+
+            var entity = await _battleRepository.GetEntityAsync(x => x.Id == id);
             if (entity == null)
-            {
-                throw new NotFoundException($"Entity with ID {id} not found");
-            }
-            var result = await _repository.DeleteAsync(entity);
+                throw new NotFoundException($"Battle with ID {id} not found");
+
+            var result = await _battleRepository.DeleteAsync(entity);
             await _unitOfWork.SaveChangesAsync();
 
             return result;
         }
 
-        public Task<BattleResultDto> ExecuteTurnAsync(BattleTurnDto turn)
+        public async Task<BattleReturnDto> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
-        }
+            var entity = await _battleRepository.GetEntityAsync(
+                predicate: x => x.Id == id,
+                asNoTracking: true,
+                includes: new Func<IQueryable<Battle>, IQueryable<Battle>>[]
+                {
+                    q => q.Include(b => b.Trainer1),
+                    q => q.Include(b => b.Trainer2),
+                    q => q.Include(b => b.Winner),
+                    q => q.Include(b => b.BattlePokemons)
+                            .ThenInclude(bp => bp.TrainerPokemon)
+                            .ThenInclude(tp => tp.Pokemon),
+                    q => q.Include(b => b.BattlePokemons)
+                            .ThenInclude(bp => bp.TrainerPokemon)
+                            .ThenInclude(tp => tp.TrainerPokemonStats)
+                });
 
-        public Task<BattleReturnDto> FinishBattleAsync(int battleId)
-        {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new NotFoundException($"Battle with ID {id} not found");
+
+            return _mapper.Map<BattleReturnDto>(entity);
         }
 
         public async Task<PagedResponse<BattleListItemDto>> GetAllAsync(int pageNumber, int pageSize)
         {
             int skip = (pageNumber - 1) * pageSize;
 
-            var query = _repository.GetQuery()
+            var query = _battleRepository.GetQuery()
                 .Include(x => x.Trainer1)
                 .Include(x => x.Trainer2);
 
@@ -87,49 +133,159 @@ namespace PokemonGameAPI.Application.Services
             };
         }
 
-        public Task<BattleReturnDto> GetBattleResultAsync(int battleId)
+        public async Task<BattleReturnDto> StartBattleAsync(int battleId)
         {
-            throw new NotImplementedException();
-        }
+            var battle = await _battleRepository.GetEntityAsync(
+                predicate: x => x.Id == battleId,
+                includes: new Func<IQueryable<Battle>, IQueryable<Battle>>[]
+                {
+                    q => q.Include(b => b.BattlePokemons)
+                            .ThenInclude(bp => bp.TrainerPokemon)
+                            .ThenInclude(tp => tp.TrainerPokemonStats),
+                    q => q.Include(b => b.Trainer1),
+                    q => q.Include(b => b.Trainer2),
+                });
 
-        public async Task<BattleReturnDto> GetByIdAsync(int id)
-        {
-            var entity = await _repository.GetEntityAsync(
-     predicate: x => x.Id == id,
-     asNoTracking: true,
-     includes: new Func<IQueryable<Battle>, IQueryable<Battle>>[]
-     {
-        query => query
-            .Include(t => t.Trainer1)
-            .Include(t => t.Trainer2)
-            .Include(t => t.Winner)
-            .Include(t => t.Trainer1BattlePokemons)
-            .Include(t => t.Trainer2BattlePokemons)
-     });
+            if (battle == null)
+                throw new NotFoundException($"Battle with id {battleId} not found.");
 
-            if (entity == null)
+            if (battle.StartTime != default)
+                throw new InvalidOperationException("Battle already started.");
+
+            battle.StartTime = DateTime.UtcNow;
+
+            foreach (var battlePokemon in battle.BattlePokemons)
             {
-                throw new NotFoundException($"Entity with ID {id} not found");
+                battlePokemon.CurrentHP = battlePokemon.TrainerPokemon.TrainerPokemonStats.HealthPoints;
+                battlePokemon.CurrentLevel = battlePokemon.TrainerPokemon.TrainerPokemonStats.Level;
             }
-            return _mapper.Map<BattleReturnDto>(entity);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return _mapper.Map<BattleReturnDto>(battle);
         }
 
-        public Task<BattleReturnDto> StartBattleAsync()
+        public async Task<BattleResultDto> ExecuteTurnAsync(BattleTurnDto turn)
         {
-            throw new NotImplementedException();
+            var battle = await _battleRepository.GetEntityAsync(
+                predicate: b => b.Id == turn.BattleId,
+                includes: new Func<IQueryable<Battle>, IQueryable<Battle>>[]
+                {
+                    q => q.Include(b => b.BattlePokemons)
+                            .ThenInclude(bp => bp.TrainerPokemon)
+                            .ThenInclude(tp => tp.TrainerPokemonStats),
+                    q => q.Include(b => b.Trainer1),
+                    q => q.Include(b => b.Trainer2),
+                    q => q.Include(b => b.Winner)
+                });
+
+            if (battle == null)
+                throw new NotFoundException($"Battle with id {turn.BattleId} not found.");
+
+            var attacker = battle.BattlePokemons.FirstOrDefault(bp => bp.Id == turn.AttackingBattlePokemonId);
+            var defender = battle.BattlePokemons.FirstOrDefault(bp => bp.Id == turn.TargetBattlePokemonId);
+
+            if (attacker == null || defender == null)
+                throw new InvalidOperationException("Attacker or defender not found in this battle.");
+
+            if (attacker.IsFainted)
+                throw new InvalidOperationException("Attacking Pokémon has fainted and cannot attack.");
+
+            if (defender.IsFainted)
+                throw new InvalidOperationException("Defending Pokémon has already fainted.");
+
+            var ability = await _abilityRepository.GetEntityAsync(a => a.Id == turn.AbilityId);
+            if (ability == null)
+                throw new NotFoundException($"Ability with ID {turn.AbilityId} not found.");
+
+            int baseDamage = Math.Max(0, attacker.TrainerPokemon.TrainerPokemonStats.AttackPoints - defender.TrainerPokemon.TrainerPokemonStats.DefensePoints);
+
+            int damage = baseDamage;
+
+            defender.CurrentHP -= damage;
+            if (defender.CurrentHP < 0)
+                defender.CurrentHP = 0;
+
+            bool trainer1HasAlive = battle.BattlePokemons
+                .Where(bp => bp.Battle.Trainer1Id == bp.TrainerPokemon.TrainerId)
+                .Any(bp => bp.CurrentHP > 0);
+
+            bool trainer2HasAlive = battle.BattlePokemons
+                .Where(bp => bp.Battle.Trainer2Id == bp.TrainerPokemon.TrainerId)
+                .Any(bp => bp.CurrentHP > 0);
+
+            bool isBattleOver = !trainer1HasAlive || !trainer2HasAlive;
+
+            string? winnerName = null;
+            if (isBattleOver)
+            {
+                if (trainer1HasAlive && !trainer2HasAlive)
+                {
+                    battle.WinnerId = battle.Trainer1Id;
+                    winnerName = battle.Trainer1.Name;
+                }
+                else if (!trainer1HasAlive && trainer2HasAlive)
+                {
+                    battle.WinnerId = battle.Trainer2Id;
+                    winnerName = battle.Trainer2.Name;
+                }
+                else
+                {
+                    battle.WinnerId = null;
+                }
+
+                battle.EndTime = DateTime.UtcNow;
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            var resultDto = new BattleResultDto
+            {
+                BattleId = battle.Id,
+                ActionSummary = $"{attacker.TrainerPokemon.Pokemon.Name} used {ability.Name} on {defender.TrainerPokemon.Pokemon.Name}, dealing {damage} damage.",
+                DamageDealt = damage,
+                TargetRemainingHP = defender.CurrentHP,
+                IsTargetFainted = defender.IsFainted,
+                IsBattleOver = isBattleOver,
+                WinnerTrainerName = winnerName
+            };
+
+            return resultDto;
+        }
+
+        public async Task<BattleReturnDto> FinishBattleAsync(int battleId)
+        {
+            var battle = await _battleRepository.GetEntityAsync(
+                predicate: b => b.Id == battleId,
+                includes: new Func<IQueryable<Battle>, IQueryable<Battle>>[]
+                {
+                    q => q.Include(b => b.Winner),
+                    q => q.Include(b => b.Trainer1),
+                    q => q.Include(b => b.Trainer2)
+                });
+
+            if (battle == null)
+                throw new NotFoundException($"Battle with id {battleId} not found.");
+
+            if (battle.EndTime != default)
+                throw new InvalidOperationException("Battle is already finished.");
+
+            battle.EndTime = DateTime.UtcNow;
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return _mapper.Map<BattleReturnDto>(battle);
         }
 
         public async Task<BattleReturnDto> UpdateAsync(int id, BattleUpdateDto model)
         {
-            var existingEntity = await _repository.GetEntityAsync(x => x.Id == id);
+            var existingEntity = await _battleRepository.GetEntityAsync(x => x.Id == id);
             if (existingEntity == null)
-            {
                 throw new NotFoundException($"Entity with ID {id} not found");
-            }
 
             _mapper.Map(model, existingEntity);
 
-            var updatedEntity = await _repository.UpdateAsync(existingEntity);
+            var updatedEntity = await _battleRepository.UpdateAsync(existingEntity);
             await _unitOfWork.SaveChangesAsync();
 
             return _mapper.Map<BattleReturnDto>(updatedEntity);

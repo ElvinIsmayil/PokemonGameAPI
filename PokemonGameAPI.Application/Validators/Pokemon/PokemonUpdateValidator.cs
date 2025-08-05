@@ -18,9 +18,6 @@ namespace PokemonGameAPI.Application.Validators.Pokemon
             RuleFor(x => x.PokemonCategoryId)
                 .GreaterThan(0).WithMessage("PokemonCategoryId must be greater than 0.");
 
-            RuleFor(x => x.LocationId)
-                .GreaterThan(0).WithMessage("LocationId must be greater than 0.");
-
             RuleFor(x => x.AbilitiesIds)
                 .NotEmpty().WithMessage("At least one ability must be selected.");
 

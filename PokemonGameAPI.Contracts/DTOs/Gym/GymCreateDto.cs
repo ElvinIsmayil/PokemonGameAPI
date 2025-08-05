@@ -6,7 +6,7 @@ namespace PokemonGameAPI.Contracts.DTOs.Gym
     {
         public string Name { get; init; } = default!;
         public string Description { get; init; } = default!;
-        public int LocationId { get; init; }
+
         public int GymLeaderTrainerId { get; init; }
         public BadgeCreateDto Badge { get; init; } = default!;
     }

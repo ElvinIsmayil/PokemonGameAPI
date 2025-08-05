@@ -13,9 +13,8 @@ namespace PokemonGameAPI.Application.Services
     public class GymService : IGymService
     {
         private readonly IRepository<Gym> _repository;
-        private readonly IRepository<Location> _locationRepository;
         private readonly IRepository<Trainer> _trainerRepository;
-        private readonly IRepository<Badge> _badgeRepository;
+        private readonly IRepository<TrainerBadge> _badgeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
@@ -23,40 +22,34 @@ namespace PokemonGameAPI.Application.Services
             IRepository<Gym> repository,
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            IRepository<Badge> badgeRepository,
-            IRepository<Location> locationRepository,
+            IRepository<TrainerBadge> badgeRepository,
             IRepository<Trainer> trainerRepository)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _badgeRepository = badgeRepository;
-            _locationRepository = locationRepository;
             _trainerRepository = trainerRepository;
         }
 
         public async Task<BadgeReturnDto> AwardBadgeAsync(AwardBadgeDto model)
         {
-                var gym = await _repository.GetEntityAsync(x => x.Id == model.GymId, asNoTracking: true);
-                if (gym == null)
-                    throw new NotFoundException($"Gym with ID {model.GymId} not found.");
-                var trainer = await _trainerRepository.GetEntityAsync(x => x.Id == model.TrainerId, asNoTracking: true);
-                if (trainer == null)
-                    throw new NotFoundException($"Trainer with ID {model.TrainerId} not found.");
-                var badge = await _badgeRepository.GetEntityAsync(x => x.GymId == gym.Id, asNoTracking: true);
-                if (badge == null)
-                    throw new NotFoundException($"Badge for Gym with ID {model.GymId} not found.");
-                trainer.Badges.Add(badge);
-                await _unitOfWork.SaveChangesAsync();
-                return _mapper.Map<BadgeReturnDto>(badge);
+            var gym = await _repository.GetEntityAsync(x => x.Id == model.GymId, asNoTracking: true);
+            if (gym == null)
+                throw new NotFoundException($"Gym with ID {model.GymId} not found.");
+            var trainer = await _trainerRepository.GetEntityAsync(x => x.Id == model.TrainerId, asNoTracking: true);
+            if (trainer == null)
+                throw new NotFoundException($"Trainer with ID {model.TrainerId} not found.");
+            var badge = await _badgeRepository.GetEntityAsync(x => x.Trainer.Gym.Id == model.GymId, asNoTracking: true);
+            if (badge == null)
+                throw new NotFoundException($"Badge for Gym with ID {model.GymId} not found.");
+            trainer.TrainerBadges.Add(badge);
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<BadgeReturnDto>(badge);
         }
 
         public async Task<GymReturnDto> CreateAsync(GymCreateDto model)
         {
-            var locationExists = await _locationRepository.IsExistsAsync(x => x.Id == model.LocationId, asNoTracking: true);
-            if (!locationExists)
-                throw new NotFoundException($"Location with ID {model.LocationId} not found.");
-
             var gymLeaderExists = await _trainerRepository.IsExistsAsync(x => x.Id == model.GymLeaderTrainerId, asNoTracking: true);
             if (!gymLeaderExists)
                 throw new NotFoundException($"Trainer with ID {model.GymLeaderTrainerId} not found.");
@@ -69,7 +62,7 @@ namespace PokemonGameAPI.Application.Services
                 var badge = _mapper.Map<Badge>(model.Badge);
                 badge.GymId = gym.Id;
                 badge.Gym = gym;
-                await _badgeRepository.CreateAsync(badge);
+                //      await _badgeRepository.CreateAsync(badge);
             }
 
             await _unitOfWork.SaveChangesAsync();

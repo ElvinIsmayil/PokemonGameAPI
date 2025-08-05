@@ -10,7 +10,7 @@ namespace PokemonGameAPI.Contracts.DTOs.Pokemon
         public bool IsWild { get; init; } = false;
 
         public int PokemonCategoryId { get; init; }
-        public int LocationId { get; init; }
+
         public ICollection<int> AbilitiesIds { get; init; } = new List<int>();
 
         public PokemonStatsCreateDto BaseStats { get; init; } = default!;

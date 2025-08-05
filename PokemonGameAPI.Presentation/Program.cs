@@ -3,18 +3,22 @@ using PokemonGameAPI.Contracts.Settings;
 using PokemonGameAPI.Infrastructure.Extensions;
 using PokemonGameAPI.Persistence.Extensions;
 using PokemonGameAPI.Presentation.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-// Add services to the container.
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(config)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.Configure<JwtSettings>(
-    builder.Configuration.GetSection("Jwt"));
+    config.GetSection("Jwt"));
 
 builder.Services.RegisterDataAccessServices(config);
 builder.Services.RegisterApplicationServices(config);
@@ -22,20 +26,30 @@ builder.Services.RegisterAPIServices(config);
 builder.Services.RegisterInfrastructureServices(config);
 
 var app = builder.Build();
+
 app.UseCors("AllowAll");
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
-app.Run();
+try
+{
+    Log.Information("Starting the application...");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application failed to start correctly.");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

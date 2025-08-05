@@ -13,8 +13,6 @@ namespace PokemonGameAPI.Domain.Entities
         public int PokemonCategoryId { get; set; }
         public PokemonCategory Category { get; set; } = default!;
 
-        public int? LocationId { get; set; }
-        public Location? Location { get; set; }
 
         public PokemonStats BaseStats { get; set; } = default!;
 

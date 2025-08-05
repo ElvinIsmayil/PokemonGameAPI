@@ -15,8 +15,7 @@ namespace PokemonGameAPI.Application.Validators.GymValidator
                 .NotEmpty().WithMessage("Description is required.")
                 .MaximumLength(500).WithMessage("Description cannot exceed 500 characters.");
 
-            RuleFor(x => x.LocationId)
-                .GreaterThan(0).WithMessage("LocationId must be greater than zero.");
+
 
             RuleFor(x => x.GymLeaderTrainerId)
                 .GreaterThan(0).WithMessage("GymLeaderTrainerId must be greater than zero.");

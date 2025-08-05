@@ -12,7 +12,7 @@ public class Trainer : BaseEntity
 
     public ICollection<TrainerBadge> TrainerBadges { get; set; } = new List<TrainerBadge>();
     public ICollection<TrainerPokemon> TrainerPokemons { get; set; } = new List<TrainerPokemon>();
-    public ICollection<Tournament> Tournaments { get; set; } = new List<Tournament>();
+    public ICollection<TrainerTournament> Tournaments { get; set; } = new List<TrainerTournament>();
 
     public ICollection<Battle> BattlesAsTrainer1 { get; set; } = new List<Battle>();
     public ICollection<Battle> BattlesAsTrainer2 { get; set; } = new List<Battle>();

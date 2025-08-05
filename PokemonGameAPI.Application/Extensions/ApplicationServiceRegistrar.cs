@@ -21,7 +21,6 @@ namespace PokemonGameAPI.Application.Extensions
             services.AddScoped<IBadgeService, BadgeService>();
             services.AddScoped<IBattleService, BattleService>();
             services.AddScoped<IGymService, GymService>();
-            services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IPokemonService, PokemonService>();
             services.AddScoped<IPokemonAbilityService, PokemonAbilityService>();
             services.AddScoped<IPokemonCategoryService, PokemonCategoryService>();

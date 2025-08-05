@@ -18,11 +18,6 @@ namespace PokemonGameAPI.Persistence.Configurations
                    .IsRequired(false)
                    .HasMaxLength(500);
 
-            builder.HasOne(g => g.Location)
-                   .WithMany(l => l.Gyms)
-                   .HasForeignKey(g => g.LocationId)
-                   .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasOne(g => g.Badge)
                    .WithOne(b => b.Gym)
                    .HasForeignKey<Badge>(b => b.GymId)

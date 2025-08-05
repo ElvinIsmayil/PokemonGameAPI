@@ -128,5 +128,9 @@ namespace PokemonGameAPI.Application.Services
             return _mapper.Map<PokemonAbilityReturnDto>(pokemonAbility);
         }
 
+        public Task<List<PokemonAbilityListItemDto>> GetAllAbilitiesByPokemonIdAsync(int pokemonId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -29,10 +29,6 @@ namespace PokemonGameAPI.Persistence.Configurations
                 .IsRequired(false);
 
             // Relations
-            builder.HasOne(p => p.Location)
-            .WithMany(l => l.WildPokemons)
-            .HasForeignKey(p => p.LocationId)
-            .OnDelete(DeleteBehavior.Restrict);
 
 
             builder.HasOne(p => p.Category)

@@ -59,5 +59,27 @@ namespace PokemonGameAPI.Presentation.Controllers
 
         }
 
+        [HttpPost("assing-ability")]
+        public async Task<IActionResult> AssignAbilityToPokemon([FromBody] PokemonAbilityAssignDto model)
+        {
+            var result = await _pokemonAbilityService.AssignPokemonAbility(model);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+
+        }
+
+        [HttpGet("pokemon-abilities/{pokemonId}")]
+        public async Task<IActionResult> GetPokemonAbilities(int pokemonId)
+        {
+            var abilities = await _pokemonAbilityService.GetAllAbilitiesByPokemonIdAsync(pokemonId);
+            if (abilities == null || !abilities.Any())
+            {
+                return NotFound();
+            }
+            return Ok(abilities);
+        }
     }
 }

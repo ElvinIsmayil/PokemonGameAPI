@@ -169,7 +169,7 @@ namespace PokemonGameAPI.Application.Services
                     query => query.Include(t => t.AppUser)
                     .Include(t=> t.TrainerPokemons)
                     .Include(t=> t.Tournaments)
-                    .Include(t=>t.Badges)
+                    .Include(t=>t.TrainerBadges)
                 }
                 );
             if (entity == null)

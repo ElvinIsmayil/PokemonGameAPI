@@ -9,22 +9,28 @@ public class BattlePokemonConfiguration : IEntityTypeConfiguration<BattlePokemon
         // Composite key
         builder.HasKey(bp => new { bp.BattleId, bp.TrainerPokemonId });
 
-        // Relationships
+        // Relationship with Battle
         builder.HasOne(bp => bp.Battle)
-            .WithMany(b => b.Trainer1BattlePokemons) // or Trainer2BattlePokemons, you'll need to clarify usage
+            .WithMany(b => b.BattlePokemons)  // single collection in Battle
             .HasForeignKey(bp => bp.BattleId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        // Relationship with TrainerPokemon
         builder.HasOne(bp => bp.TrainerPokemon)
-            .WithMany() // Assuming TrainerPokemon doesn't have BattlePokemons navigation
+            .WithMany() // assuming TrainerPokemon does not track BattlePokemons
             .HasForeignKey(bp => bp.TrainerPokemonId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Property configs (optional)
+        // Required properties
         builder.Property(bp => bp.CurrentHP)
             .IsRequired();
 
         builder.Property(bp => bp.CurrentLevel)
             .IsRequired();
+
+        // Configure TrainerSide as int (enum)
+        builder.Property(bp => bp.Side)
+            .IsRequired()
+            .HasConversion<int>();
     }
 }

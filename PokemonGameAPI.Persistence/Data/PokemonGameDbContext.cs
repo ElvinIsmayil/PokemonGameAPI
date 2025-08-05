@@ -11,8 +11,6 @@ namespace PokemonGameAPI.Persistence.Data
         public DbSet<Badge> Badges { get; set; } = default!;
         public DbSet<Battle> Battles { get; set; } = default!;
         public DbSet<Gym> Gyms { get; set; } = default!;
-        public DbSet<Location> Locations { get; set; } = default!;
-
         public DbSet<Pokemon> Pokemons { get; set; } = default!;
         public DbSet<PokemonAbility> PokemonAbilities { get; set; } = default!;
         public DbSet<PokemonCategory> PokemonCategories { get; set; } = default!;
