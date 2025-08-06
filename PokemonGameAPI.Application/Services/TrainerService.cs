@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using PokemonGameAPI.Application.Exceptions;
+using PokemonGameAPI.Application.CustomExceptions;
 using PokemonGameAPI.Contracts.DTOs.Pagination;
 using PokemonGameAPI.Contracts.DTOs.Trainer;
 using PokemonGameAPI.Contracts.DTOs.TrainerPokemon;
@@ -33,7 +33,7 @@ namespace PokemonGameAPI.Application.Services
         {
             bool pokemonExists = await _pokemonRepository.IsExistsAsync(x => x.Id == model.PokemonId);
             if (!pokemonExists)
-                throw new NotFoundException($"Pokemon with ID {model.PokemonId} not found");
+                throw new CustomException($"Pokemon with ID {model.PokemonId} not found");
             var trainer = await _repository.GetEntityAsync(
      x => x.Id == model.TrainerId,
      includes: new Func<IQueryable<Trainer>, IQueryable<Trainer>>[]
@@ -43,12 +43,12 @@ namespace PokemonGameAPI.Application.Services
  );
 
             if (trainer is null)
-                throw new NotFoundException($"Trainer with ID {model.TrainerId} not found");
+                throw new CustomException($"Trainer with ID {model.TrainerId} not found");
 
             var trainerPokemonExists = await _trainerPokemonRepository.IsExistsAsync(x => x.TrainerId == model.TrainerId && x.PokemonId == model.PokemonId);
 
             if (trainerPokemonExists)
-                throw new ConflictException($"Trainer with ID {model.TrainerId} already has Pokemon with ID {model.PokemonId}");
+                throw new CustomException($"Trainer with ID {model.TrainerId} already has Pokemon with ID {model.PokemonId}");
 
             var trainerPokemon = new TrainerPokemon
             {
@@ -63,19 +63,19 @@ namespace PokemonGameAPI.Application.Services
         {
             var trainer = await _repository.GetEntityAsync(x => x.Id == model.TrainerId);
             if (trainer == null)
-                throw new NotFoundException($"Trainer with ID {model.TrainerId} not found");
+                throw new CustomException($"Trainer with ID {model.TrainerId} not found");
 
             if (!_pokemonSettings.StarterPokemons.Contains(model.PokemonId))
             {
-                throw new ValidationException("Selected Pokémon is not a valid starter Pokémon.");
+                throw new CustomException("Selected Pokémon is not a valid starter Pokémon.");
 
             }
             var starterPokemon = await _pokemonRepository.GetEntityAsync(x => x.Id == model.PokemonId);
             if (starterPokemon == null)
-                throw new NotFoundException($"Pokemon with ID {model.PokemonId} not found");
+                throw new CustomException($"Pokemon with ID {model.PokemonId} not found");
 
             if (trainer.TrainerPokemons.Any(p => p.PokemonId == model.PokemonId))
-                throw new ConflictException($"Trainer with ID {model.TrainerId} already has Pokemon with ID {model.PokemonId}");
+                throw new CustomException($"Trainer with ID {model.TrainerId} already has Pokemon with ID {model.PokemonId}");
 
             var trainerPokemon = new TrainerPokemon
             {
@@ -131,5 +131,18 @@ namespace PokemonGameAPI.Application.Services
         }
 
 
+        public override async Task<TrainerResponseDto> GetByIdAsync(int id, params Func<IQueryable<Trainer>, IQueryable<Trainer>>[] includes)
+        {
+            if (includes == null || includes.Length == 0)
+            {
+                includes = new Func<IQueryable<Trainer>, IQueryable<Trainer>>[]
+                {
+                    q => q.Include(t => t.TrainerPokemons).ThenInclude(tp => tp.Pokemon)
+                    .Include(t=>t.AppUser).Include(t => t.TrainerBadges).Include(t=>t.Tournaments)
+                };
+            }
+            return await base.GetByIdAsync(id, includes);
+
+        }
     }
 }

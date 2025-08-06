@@ -25,11 +25,13 @@ namespace PokemonGameAPI.Application.Services
         public Task<BattleResponseDto> GetBattleResultAsync(int battleId)
         {
             throw new NotImplementedException();
+
         }
 
         public Task<BattleResultDto> ExecuteTurnAsync(BattleTurnDto turn)
         {
             throw new NotImplementedException();
+
         }
     }
 }

@@ -6,7 +6,7 @@ using PokemonGameAPI.Domain.Repository;
 using PokemonGameAPI.Persistence.Data;
 using PokemonGameAPI.Persistence.Repository;
 
-namespace PokemonGameAPI.Persistence.Extensions
+namespace PokemonGameAPI.Persistence
 {
     public static class DataAccessServiceRegistrar
     {

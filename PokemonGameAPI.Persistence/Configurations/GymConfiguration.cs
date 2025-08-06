@@ -21,12 +21,12 @@ namespace PokemonGameAPI.Persistence.Configurations
             builder.HasOne(g => g.Badge)
                    .WithOne(b => b.Gym)
                    .HasForeignKey<Badge>(b => b.GymId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(g => g.GymLeader)
                    .WithMany()
                    .HasForeignKey(g => g.GymLeaderTrainerId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasMany(g => g.NpcTrainers)
                    .WithOne(t => t.Gym)

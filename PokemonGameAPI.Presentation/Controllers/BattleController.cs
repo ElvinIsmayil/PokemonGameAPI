@@ -62,76 +62,32 @@ namespace PokemonGameAPI.Presentation.Controllers
             return NoContent();
         }
 
-        // New: Start a battle by id
         [HttpPost("{id}/start")]
         public async Task<IActionResult> StartBattle(int id)
         {
-            try
-            {
                 var battle = await _battleService.StartBattleAsync(id);
                 return Ok(battle);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
         }
 
-        // New: Finish a battle by id
         [HttpPost("{id}/finish")]
         public async Task<IActionResult> FinishBattle(int id)
         {
-            try
-            {
                 var battle = await _battleService.FinishBattleAsync(id);
                 return Ok(battle);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
         }
 
-        // New: Execute a turn in a battle
         [HttpPost("execute-turn")]
         public async Task<IActionResult> ExecuteTurn([FromBody] BattleTurnDto turn)
         {
-            try
-            {
                 var result = await _battleService.ExecuteTurnAsync(turn);
                 return Ok(result);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
         }
 
-        // New: Get battle result by id
         [HttpGet("{id}/result")]
         public async Task<IActionResult> GetBattleResult(int id)
         {
-            try
-            {
                 var result = await _battleService.GetBattleResultAsync(id);
                 return Ok(result);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
         }
     }
 }

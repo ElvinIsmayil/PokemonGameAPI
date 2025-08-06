@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using PokemonGameAPI.Application.Exceptions;
+using PokemonGameAPI.Application.CustomExceptions;
 using PokemonGameAPI.Contracts.DTOs.Pagination;
 using PokemonGameAPI.Contracts.DTOs.PokemonAbility;
 using PokemonGameAPI.Contracts.Services;
@@ -27,14 +27,14 @@ namespace PokemonGameAPI.Application.Services
             );
 
             if (pokemonAbility == null)
-                throw new NotFoundException($"Ability with ID {model.AbilityId} not found");
+                throw new CustomException($"Ability with ID {model.AbilityId} not found");
 
             var pokemons = await _pokemonRepository.GetQuery()
                 .Where(p => model.PokemonIds.Contains(p.Id))
                 .ToListAsync();
 
             if (!pokemons.Any())
-                throw new NotFoundException("No valid Pokémon found with the provided IDs");
+                throw new CustomException("No valid Pokémon found with the provided IDs");
 
             foreach (var pokemon in pokemons)
             {

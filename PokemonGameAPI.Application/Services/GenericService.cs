@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using PokemonGameAPI.Application.Exceptions;
+using PokemonGameAPI.Application.CustomExceptions;
 using PokemonGameAPI.Contracts.DTOs.Pagination;
 using PokemonGameAPI.Contracts.Services;
 using PokemonGameAPI.Domain.Entities.Common;
@@ -35,14 +35,14 @@ namespace PokemonGameAPI.Application.Services
             var entity = await _repository.GetEntityAsync(x => x.Id == id);
             if (entity == null)
             {
-                throw new NotFoundException($"Entity with ID {id} not found.");
+                throw new CustomException($"Entity with ID {id} not found.");
             }
 
             var result = await _repository.DeleteAsync(entity);
             await _unitOfWork.SaveChangesAsync();
             if (!result)
             {
-                throw new ConflictException($"Failed to delete entity with ID {id}.");
+                throw new CustomException($"Failed to delete entity with ID {id}.");
             }
             return result;
         }
@@ -75,7 +75,7 @@ namespace PokemonGameAPI.Application.Services
             var entity = await _repository.GetEntityAsync(x => x.Id == id, asNoTracking: true, includes: includes);
             if (entity == null)
             {
-                throw new NotFoundException($"Entity with ID {id} not found.");
+                throw new CustomException($"Entity with ID {id} not found.");
             }
             return _mapper.Map<TResponse>(entity);
 
@@ -86,7 +86,7 @@ namespace PokemonGameAPI.Application.Services
             var entity = await _repository.GetEntityAsync(x => x.Id == id);
             if (entity == null)
             {
-                throw new NotFoundException($"Entity with ID {id} not found.");
+                throw new CustomException($"Entity with ID {id} not found.");
             }
 
             _mapper.Map(request, entity);

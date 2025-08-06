@@ -15,16 +15,19 @@ namespace PokemonGameAPI.Application.Services
         public Task EvolveAsync(int trainerPokemonId)
         {
             throw new NotImplementedException();
+
         }
 
         public Task<TrainerPokemonResponseDto> GainExperienceAsync(LevelUpDto model)
         {
             throw new NotImplementedException();
+
         }
 
         public Task LevelUpAsync(LevelUpDto model)
         {
             throw new NotImplementedException();
+
         }
     }
 }

@@ -6,9 +6,7 @@ namespace PokemonGameAPI.Contracts.Services
 {
     public interface IPokemonService : IGenericService<Pokemon, PokemonRequestDto, PokemonResponseDto>
     {
-
         Task<PokemonResponseDto> UploadImgAsync(int id, IFormFile file);
-
         Task<IEnumerable<PokemonResponseDto>> GetStarterPokemonsAsync();
     }
 }

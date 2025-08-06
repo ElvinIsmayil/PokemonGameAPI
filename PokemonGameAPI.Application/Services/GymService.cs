@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PokemonGameAPI.Application.Exceptions;
+using PokemonGameAPI.Application.CustomExceptions;
 using PokemonGameAPI.Contracts.DTOs.Badge;
 using PokemonGameAPI.Contracts.DTOs.Gym;
 using PokemonGameAPI.Contracts.Services;
@@ -24,13 +24,13 @@ namespace PokemonGameAPI.Application.Services
         {
             var gym = await _repository.GetEntityAsync(x => x.Id == model.GymId, asNoTracking: true);
             if (gym == null)
-                throw new NotFoundException($"Gym with ID {model.GymId} not found.");
+                throw new CustomException($"Gym with ID {model.GymId} not found.");
             var trainer = await _trainerRepository.GetEntityAsync(x => x.Id == model.TrainerId, asNoTracking: true);
             if (trainer == null)
-                throw new NotFoundException($"Trainer with ID {model.TrainerId} not found.");
+                throw new CustomException($"Trainer with ID {model.TrainerId} not found.");
             var badge = await _badgeRepository.GetEntityAsync(x => x.GymId == model.GymId, asNoTracking: true);
             if (badge == null)
-                throw new NotFoundException($"Badge for Gym with ID {model.GymId} not found.");
+                throw new CustomException($"Badge for Gym with ID {model.GymId} not found.");
             var trainerBadge = await _trainerBadgeRepository.CreateAsync(new TrainerBadge
             {
                 TrainerId = model.TrainerId,

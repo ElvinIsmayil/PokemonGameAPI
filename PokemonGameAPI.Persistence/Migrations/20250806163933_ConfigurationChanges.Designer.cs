@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokemonGameAPI.Persistence.Data;
 
@@ -11,9 +12,11 @@ using PokemonGameAPI.Persistence.Data;
 namespace PokemonGameAPI.Persistence.Migrations
 {
     [DbContext(typeof(PokemonGameDbContext))]
-    partial class PokemonGameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250806163933_ConfigurationChanges")]
+    partial class ConfigurationChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -791,6 +794,9 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.Property<string>("AppUserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AppUserId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -819,6 +825,10 @@ namespace PokemonGameAPI.Persistence.Migrations
                     b.HasIndex("AppUserId")
                         .IsUnique()
                         .HasFilter("[AppUserId] IS NOT NULL");
+
+                    b.HasIndex("AppUserId1")
+                        .IsUnique()
+                        .HasFilter("[AppUserId1] IS NOT NULL");
 
                     b.HasIndex("GymId");
 
@@ -1061,9 +1071,13 @@ namespace PokemonGameAPI.Persistence.Migrations
             modelBuilder.Entity("Trainer", b =>
                 {
                     b.HasOne("PokemonGameAPI.Domain.Entities.AppUser", "AppUser")
-                        .WithOne("Trainer")
+                        .WithOne()
                         .HasForeignKey("Trainer", "AppUserId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("PokemonGameAPI.Domain.Entities.AppUser", null)
+                        .WithOne("Trainer")
+                        .HasForeignKey("Trainer", "AppUserId1");
 
                     b.HasOne("PokemonGameAPI.Domain.Entities.Gym", "Gym")
                         .WithMany("NpcTrainers")

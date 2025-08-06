@@ -17,8 +17,7 @@ namespace PokemonGameAPI.Application.Validators.Trainer
             RuleFor(x => x.ExperiencePoints)
                 .GreaterThanOrEqualTo(0).WithMessage("ExperiencePoints must be 0 or greater.");
 
-            RuleFor(x => x.AppUserId)
-                .GreaterThan(0).WithMessage("AppUserId must be greater than 0.");
+
 
             RuleForEach(x => x.TrainerPokemonIds)
                 .GreaterThan(0).WithMessage("Each Pokémon ID must be greater than 0.");

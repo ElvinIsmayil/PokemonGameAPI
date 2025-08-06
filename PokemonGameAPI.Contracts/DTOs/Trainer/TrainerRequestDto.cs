@@ -6,7 +6,7 @@
         public int Level { get; init; } = 1;
         public int ExperiencePoints { get; init; } = 0;
 
-        public int AppUserId { get; init; }
+        public string AppUserId { get; init; } = default!;
 
         public ICollection<int> TrainerPokemonIds { get; init; } = new List<int>();
         public ICollection<int> BadgeIds { get; init; } = new List<int>();

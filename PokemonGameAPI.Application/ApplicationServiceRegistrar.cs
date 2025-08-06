@@ -5,7 +5,7 @@ using PokemonGameAPI.Application.Profiles;
 using PokemonGameAPI.Application.Services;
 using PokemonGameAPI.Contracts.Services;
 
-namespace PokemonGameAPI.Application.Extensions
+namespace PokemonGameAPI.Application
 {
     public static class ApplicationServiceRegistrar
     {

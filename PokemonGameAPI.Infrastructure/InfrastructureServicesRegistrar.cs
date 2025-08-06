@@ -10,15 +10,17 @@ using PokemonGameAPI.Infrastructure.Services;
 using PokemonGameAPI.Persistence.Data;
 using System.Text;
 
-namespace PokemonGameAPI.Infrastructure.Extensions
+namespace PokemonGameAPI.Infrastructure
 {
     public static class InfrastructureServicesRegistrar
     {
         public static IServiceCollection RegisterInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             // Infrastructure services registration
-            services.AddScoped<IImageService, ImageService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.Configure<CloudinarySettings>(
+            configuration.GetSection("CloudinarySettings"));
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
 
             // Identity registration
             services.AddIdentity<AppUser, IdentityRole>(options =>

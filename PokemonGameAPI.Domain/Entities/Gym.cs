@@ -9,8 +9,8 @@ namespace PokemonGameAPI.Domain.Entities
 
         public Badge Badge { get; set; } = default!;
 
-        public int GymLeaderTrainerId { get; set; }
-        public Trainer GymLeader { get; set; } = default!;
+        public int? GymLeaderTrainerId { get; set; }
+        public Trainer? GymLeader { get; set; } 
 
         public ICollection<Battle> Battles { get; set; } = new List<Battle>();
         public ICollection<Trainer> NpcTrainers { get; set; } = new List<Trainer>();

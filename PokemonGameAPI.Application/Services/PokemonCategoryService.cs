@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using PokemonGameAPI.Application.Exceptions;
+using PokemonGameAPI.Application.CustomExceptions;
 using PokemonGameAPI.Contracts.DTOs.PokemonCategory;
 using PokemonGameAPI.Contracts.Services;
 using PokemonGameAPI.Domain.Entities;
@@ -22,7 +22,7 @@ namespace PokemonGameAPI.Application.Services
             var pokemonCategory = await _repository.GetEntityAsync(x => x.Id == model.CategoryId);
             if (pokemonCategory == null)
             {
-                throw new NotFoundException($"Pokemon Category with ID {model.CategoryId} not found");
+                throw new CustomException($"Pokemon Category with ID {model.CategoryId} not found");
             }
 
             var pokemons = await _pokemonRepository.GetQuery()
@@ -31,7 +31,7 @@ namespace PokemonGameAPI.Application.Services
 
             if (pokemons.Count != model.PokemonIds.Count)
             {
-                throw new NotFoundException("One or more Pokemon IDs not found");
+                throw new CustomException("One or more Pokemon IDs not found");
             }
 
 

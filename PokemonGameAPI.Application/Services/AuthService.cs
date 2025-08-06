@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using PokemonGameAPI.Application.Exceptions;
+using PokemonGameAPI.Application.CustomExceptions;
 using PokemonGameAPI.Contracts.DTOs.Auth;
 using PokemonGameAPI.Contracts.Services;
 using PokemonGameAPI.Contracts.Settings;
@@ -29,10 +29,10 @@ namespace PokemonGameAPI.Application.Services
         public async Task RegisterAsync(RegisterDto registerDto)
         {
             if (_userManager.Users.Any(u => u.Email == registerDto.Email))
-                throw new Exception("Email already in use");
+                throw new CustomException("Email already in use");
             var existUser = await _userManager.FindByNameAsync(registerDto.UserName);
             if (existUser != null)
-                throw new Exception("Username already in use");
+                throw new CustomException("Username already in use");
             AppUser appUser = new AppUser();
             appUser.UserName = registerDto.UserName;
             appUser.Email = registerDto.Email;
@@ -42,16 +42,10 @@ namespace PokemonGameAPI.Application.Services
             {
                 var errorMessages = result.Errors.ToDictionary(e => e.Code, e => e.Description);
 
-                throw new Exception($"Registration failed: {string.Join(", ", errorMessages.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}");
+                throw new CustomException($"Registration failed: {string.Join(", ", errorMessages.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}");
             }
 
-            var Trainer = new Trainer()
-            {
-                Name = registerDto.UserName,
-                AppUser = appUser,
-                AppUserId = appUser.Id,
-            };
-            await _trainerRepository.CreateAsync(Trainer);
+
             await _unitOfWork.SaveChangesAsync();
             await _userManager.AddToRoleAsync(appUser, "Player");
         }
@@ -59,9 +53,11 @@ namespace PokemonGameAPI.Application.Services
         public async Task<AuthResponseDto> LoginAsync(LoginDto loginDto)
         {
             var existUser = await _userManager.FindByEmailAsync(loginDto.Email);
+            if (existUser is null)
+                throw new CustomException("User not found", 404);
             var result = await _userManager.CheckPasswordAsync(existUser, loginDto.Password);
             if (!result)
-                throw new UnAuthorizedException("Password is incorrect");
+                throw new CustomException("Password is incorrect", 400);
             IList<string> roles = await _userManager.GetRolesAsync(existUser);
             var token = _tokenService.GetToken(existUser, roles);
             return new AuthResponseDto()

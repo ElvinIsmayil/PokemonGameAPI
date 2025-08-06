@@ -21,9 +21,9 @@ public class TrainerConfiguration : IEntityTypeConfiguration<Trainer>
 
         // AppUser (One-to-One, optional)
         builder.HasOne(t => t.AppUser)
-               .WithOne()
-               .HasForeignKey<Trainer>(t => t.AppUserId)
-               .OnDelete(DeleteBehavior.Cascade); // Or Restrict if you want to keep the user
+       .WithOne(u => u.Trainer) // 👈 connect the navigation on AppUser side
+       .HasForeignKey<Trainer>(t => t.AppUserId)
+       .OnDelete(DeleteBehavior.Cascade); // or Restrict
 
         // Gym (Many-to-One, optional)
         builder.HasOne(t => t.Gym)

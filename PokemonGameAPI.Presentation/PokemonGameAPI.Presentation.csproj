@@ -27,7 +27,9 @@
     <ProjectReference Include="..\PokemonGameAPI.Persistence\PokemonGameAPI.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+
+	<ItemGroup>
+    <Folder Include="Logs\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

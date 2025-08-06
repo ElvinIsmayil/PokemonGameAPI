@@ -93,11 +93,9 @@ namespace PokemonGameAPI.Application.Profiles
             // Trainer
             CreateMap<Trainer, TrainerResponseDto>()
                 .ForMember(dest => dest.TrainerPokemons, opt => opt.MapFrom(src => src.TrainerPokemons))
-                //.ForMember(dest => dest.Badges, opt => opt.MapFrom(src => src.TrainerBadges))
-                .ForMember(dest => dest.AppUserName, opt => opt.MapFrom(src => src.AppUser.Name))
+                .ForMember(dest => dest.AppUserName, opt => opt.MapFrom(src => src.AppUser != null ? src.AppUser.Name : string.Empty))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
-                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AppUser.UserName));
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
 
             CreateMap<TrainerRequestDto, Trainer>().ReverseMap();
 

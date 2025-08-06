@@ -3,7 +3,7 @@ using PokemonGameAPI.Contracts.Settings;
 using PokemonGameAPI.Presentation.ExceptionHandlers;
 using Serilog;
 
-namespace PokemonGameAPI.Presentation.Extensions
+namespace PokemonGameAPI.Presentation
 {
     public static class APIServicesRegistrar
     {
@@ -52,11 +52,7 @@ namespace PokemonGameAPI.Presentation.Extensions
             });
 
             // Exception Handlers
-            services.AddExceptionHandler<NotFoundExceptionHandler>();
-            services.AddExceptionHandler<GlobalExceptionHandler>();
-            services.AddExceptionHandler<ValidationExceptionHandler>();
-            services.AddExceptionHandler<UnauthorizedExceptionHandler>();
-            services.AddProblemDetails();
+            
 
             //Logger registration
             services.AddSingleton(Log.Logger);
